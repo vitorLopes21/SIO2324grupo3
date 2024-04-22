@@ -1,3 +1,5 @@
+using Microsoft.Data.SqlClient;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,6 +19,23 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+string connectionString = app.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!;
+
+try
+{
+    // Table would be created ahead of time in production
+    using var conn = new SqlConnection(connectionString);
+    conn.Open();
+
+    Console.WriteLine("IM CONNECTED!!!");
+    
+}
+catch (Exception e)
+{
+    // Table may already exist
+    Console.WriteLine(e.Message);
+}
 
 app.UseAuthorization();
 
