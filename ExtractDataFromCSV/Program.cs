@@ -6,9 +6,6 @@
 // Bulk insert the data table into the database
 // Close the connection
 
-using ExcelDataReader;
-using System.Reflection;
-
 SqlConnection connection = new(
     new SqlConnectionStringBuilder
     {
@@ -30,6 +27,9 @@ DataTable dataTableDateDimension = new("dbo.Date_Dimension");
 DataTable dataTableIdentityDimension = new("dbo.Identity_Dimension");
 DataTable dataTableInvoiceDimension = new("dbo.Invoice_Dimension");
 DataTable dataTableProductDimension = new("dbo.Product_Dimension");
+DataTable dataTableSalesFactTable = new("dbo.SalesFactTable");
+DataTable dataTablePurchasesFactTable = new("dbo.PurchasesFactTable");
+DataTable dataTableMovementsFactTable = new("dbo.MovementsFactTable");
 
 // Create the columns for the Date Dimension table
 dataTableDateDimension.Columns.Add("Date_Key", typeof(int));
@@ -57,6 +57,50 @@ dataTableProductDimension.Columns.Add("VAT", typeof(float));
 dataTableProductDimension.Columns.Add("QtExistencias", typeof(float));
 dataTableProductDimension.Columns.Add("ValorExistencias", typeof(float));
 dataTableProductDimension.Columns.Add("PCM", typeof(float));
+
+// Create the columns for the Sales Fact Table
+dataTableSalesFactTable.Columns.Add("NIF_Client", typeof(int));
+dataTableSalesFactTable.Columns.Add("Number", typeof(string));
+dataTableSalesFactTable.Columns.Add("Type", typeof(string));
+dataTableSalesFactTable.Columns.Add("Cod", typeof(string));
+dataTableSalesFactTable.Columns.Add("Quantity", typeof(int));
+dataTableSalesFactTable.Columns.Add("NetAmount", typeof(float));
+dataTableSalesFactTable.Columns.Add("GrossAmount", typeof(float));
+dataTableSalesFactTable.Columns.Add("VAT", typeof(float));
+dataTableSalesFactTable.Columns.Add("OriginalCurrency", typeof(string));
+dataTableSalesFactTable.Columns.Add("ExchangeRate", typeof(float));
+dataTableSalesFactTable.Columns.Add("NetAmountOriginalCurrency", typeof(int));
+dataTableSalesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(int));
+dataTableSalesFactTable.Columns.Add("VATOriginalCurrency", typeof(int));
+
+// Create the columns for the Purchases Fact Table
+dataTablePurchasesFactTable.Columns.Add("NIF_Client", typeof(int));
+dataTablePurchasesFactTable.Columns.Add("Number", typeof(string));
+dataTablePurchasesFactTable.Columns.Add("Type", typeof(string));
+dataTablePurchasesFactTable.Columns.Add("Cod", typeof(string));
+dataTablePurchasesFactTable.Columns.Add("Quantity", typeof(int));
+dataTablePurchasesFactTable.Columns.Add("OurRef", typeof(string));
+dataTablePurchasesFactTable.Columns.Add("NetAmount", typeof(float));
+dataTablePurchasesFactTable.Columns.Add("GrossAmount", typeof(float));
+dataTablePurchasesFactTable.Columns.Add("VAT", typeof(float));
+dataTablePurchasesFactTable.Columns.Add("OriginalCurrency", typeof(string));
+dataTablePurchasesFactTable.Columns.Add("ExchangeRate", typeof(float));
+dataTablePurchasesFactTable.Columns.Add("NetAmountOriginalCurrency", typeof(int));
+dataTablePurchasesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(int));
+dataTablePurchasesFactTable.Columns.Add("VATOriginalCurrency", typeof(int));
+
+// Create the columns for the Movements Fact Table
+dataTableMovementsFactTable.Columns.Add("Cod", typeof(string));
+dataTableMovementsFactTable.Columns.Add("Doc", typeof(string));
+dataTableMovementsFactTable.Columns.Add("Type", typeof(string));
+dataTableMovementsFactTable.Columns.Add("MovementDate", typeof(DateTime));
+dataTableMovementsFactTable.Columns.Add("DocumentDate", typeof(DateTime));
+dataTableMovementsFactTable.Columns.Add("EntryQuantity", typeof(int));
+dataTableMovementsFactTable.Columns.Add("ExitQuantity", typeof(int));
+dataTableMovementsFactTable.Columns.Add("EntryValue", typeof(decimal));
+dataTableMovementsFactTable.Columns.Add("ExitValue", typeof(decimal));
+dataTableMovementsFactTable.Columns.Add("MovementValue", typeof(decimal));
+dataTableMovementsFactTable.Columns.Add("ThirdParty", typeof(string));
 
 // Read the files in ..\Data
 string? directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -142,6 +186,86 @@ using (var stream = File.Open($"{filePath}\\Products.xlsx", FileMode.Open, FileA
     }
 }
 
+// Read the Sales Invoices Excel file and insert the data into the Sales Fact Table
+using (var stream = File.Open($"{filePath}\\SalesInvoices.xlsx", FileMode.Open, FileAccess.Read))
+{
+    using (var reader = ExcelReaderFactory.CreateReader(stream))
+    {
+        while (reader.Read()) // Each Read() call will move to the next row
+        {
+            // Get the values from the current row...
+            int nifClient = int.Parse(reader.GetString(0));
+            string number = reader.GetString(1);
+            string type = reader.GetString(2);
+            string cod = reader.GetString(3);
+            int quantity = int.Parse(reader.GetString(4));
+            float netAmount = float.Parse(reader.GetString(5));
+            float grossAmount = float.Parse(reader.GetString(6));
+            float vat = float.Parse(reader.GetString(7));
+            string originalCurrency = reader.GetString(8);
+            float exchangeRate = float.Parse(reader.GetString(9));
+            int netAmountOriginalCurrency = int.Parse(reader.GetString(10));
+            int grossAmountOriginalCurrency = int.Parse(reader.GetString(11));
+            int vatOriginalCurrency = int.Parse(reader.GetString(12));
+
+            dataTableSalesFactTable.Rows.Add(nifClient, number, type, cod, quantity, netAmount, grossAmount, vat, originalCurrency, exchangeRate, netAmountOriginalCurrency, grossAmountOriginalCurrency, vatOriginalCurrency);
+        }
+    }
+}
+
+// Read the Purchase Invoices Excel file and insert the data into the Purchases Fact Table
+using (var stream = File.Open($"{filePath}\\PurchaseInvoices.xlsx", FileMode.Open, FileAccess.Read))
+{
+    using (var reader = ExcelReaderFactory.CreateReader(stream))
+    {
+        while (reader.Read()) // Each Read() call will move to the next row
+        {
+            // Get the values from the current row...
+            int nifClient = int.Parse(reader.GetString(0));
+            string number = reader.GetString(1);
+            string type = reader.GetString(2);
+            string cod = reader.GetString(3);
+            int quantity = int.Parse(reader.GetString(4));
+            string ourRef = reader.GetString(5);
+            float netAmount = float.Parse(reader.GetString(6));
+            float grossAmount = float.Parse(reader.GetString(7));
+            float vat = float.Parse(reader.GetString(8));
+            string originalCurrency = reader.GetString(9);
+            float exchangeRate = float.Parse(reader.GetString(10));
+            int netAmountOriginalCurrency = int.Parse(reader.GetString(11));
+            int grossAmountOriginalCurrency = int.Parse(reader.GetString(12));
+            int vatOriginalCurrency = int.Parse(reader.GetString(13));
+
+            dataTableSalesFactTable.Rows.Add(nifClient, number, type, cod, quantity, ourRef, netAmount, grossAmount, vat, originalCurrency, exchangeRate, netAmountOriginalCurrency, grossAmountOriginalCurrency, vatOriginalCurrency);
+        }
+    }
+}
+
+// Read the Movements Excel file and insert the data into the Movements Fact Table
+using (var stream = File.Open($"{filePath}\\StockMovements.xlsx", FileMode.Open, FileAccess.Read))
+{
+    using (var reader = ExcelReaderFactory.CreateReader(stream))
+    {
+        while (reader.Read()) // Each Read() call will move to the next row
+        {
+            // Get the values from the current row...
+            string cod = reader.GetString(0);
+            string doc = reader.GetString(1);
+            string type = reader.GetString(2);
+            DateTime movementDate = DateTime.Parse(reader.GetString(3), new CultureInfo("pt-PT"));
+            DateTime documentDate = DateTime.Parse(reader.GetString(4), new CultureInfo("pt-PT"));
+            int entryQuantity = int.Parse(reader.GetString(5));
+            int exitQuantity = int.Parse(reader.GetString(6));
+            decimal entryValue = decimal.Parse(reader.GetString(7));
+            decimal exitValue = decimal.Parse(reader.GetString(8));
+            decimal movementValue = decimal.Parse(reader.GetString(9));
+            string thirdParty = reader.GetString(10);
+
+            dataTableMovementsFactTable.Rows.Add(cod, doc, type, movementDate, documentDate, entryQuantity, exitQuantity, entryValue, exitValue, movementValue, thirdParty);
+        }
+    }
+}
+
 // SqlBulkCopy for the Date Dimension table
 using (SqlBulkCopy bulkCopy = new(connection))
 {
@@ -168,6 +292,27 @@ using (SqlBulkCopy bulkCopy = new(connection))
 {
     bulkCopy.DestinationTableName = "dbo.Product_Dimension";
     bulkCopy.WriteToServer(dataTableProductDimension);
+}
+
+// SqlBulkCopy for the Sales Fact Table
+using (SqlBulkCopy bulkCopy = new(connection))
+{
+    bulkCopy.DestinationTableName = "dbo.SalesFactTable";
+    bulkCopy.WriteToServer(dataTableSalesFactTable);
+}
+
+// SqlBulkCopy for the Purchases Fact Table
+using (SqlBulkCopy bulkCopy = new(connection))
+{
+    bulkCopy.DestinationTableName = "dbo.PurchasesFactTable";
+    bulkCopy.WriteToServer(dataTablePurchasesFactTable);
+}
+
+// SqlBulkCopy for the Movements Fact Table
+using (SqlBulkCopy bulkCopy = new(connection))
+{
+    bulkCopy.DestinationTableName = "dbo.MovementsFactTable";
+    bulkCopy.WriteToServer(dataTableMovementsFactTable);
 }
 
 // Finally, close the connection
