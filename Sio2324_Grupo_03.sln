@@ -3,11 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sio2324_Grupo_03", ".\Sio2324_Grupo_03\Sio2324_Grupo_03.csproj", "{A3E24BE6-2FED-4AFE-A529-6632C9461DAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sio2324_Grupo_03", "Sio2324_Grupo_03\Sio2324_Grupo_03.csproj", "{A3E24BE6-2FED-4AFE-A529-6632C9461DAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractDataFromCSV", ".\ExtractDataFromCSV\ExtractDataFromCSV.csproj", "{48A1D3DD-5153-473E-ADD1-A8084CC20E14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractDataFromCSV", "ExtractDataFromCSV\ExtractDataFromCSV.csproj", "{48A1D3DD-5153-473E-ADD1-A8084CC20E14}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", ".\Data", "{D149779B-0AD5-4CE7-A203-751EC17ECF62}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D149779B-0AD5-4CE7-A203-751EC17ECF62}"
+	ProjectSection(SolutionItems) = preProject
+		Data\Clients.xlsx = Data\Clients.xlsx
+		Data\Suppliers.xlsx = Data\Suppliers.xlsx
+		Data\Products.xlsx = Data\Products.xlsx
+		Data\SaleInvoices.xlsx = Data\SaleInvoices.xlsx
+		Data\PurchaseInvoices.xlsx = Data\PurchaseInvoices.xlsx
+		Data\StockMovements.xlsx = Data\StockMovements.xlsx
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
