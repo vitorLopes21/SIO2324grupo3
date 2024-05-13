@@ -386,12 +386,12 @@ namespace ExtractDataFromCSV
 
                         if (!invoiceDateKeys.ContainsKey((doc, type)))
                         {
-                            if (doc.IsNullOrEmpty() || type.IsNullOrEmpty())
+                            if (doc.IsNullOrEmpty())
                             {
-                                continue;
+                                doc = "PreviousStock";
                             }
 
-                            if (type.Equals("Entrada"))
+                            if (type.Equals("Entrada") || type.IsNullOrEmpty() || type.Equals("Stock anterior"))
                             {
                                 type = "In";
                             }
@@ -419,7 +419,7 @@ namespace ExtractDataFromCSV
                             value[0] = existingQuantityValue.ToString();
                         }
 
-                        if (dataTableMovementsFactTable.AsEnumerable().Any(row => row.Field<string>("Doc") == doc && row.Field<string>("Type") == type))
+                        if (dataTableMovementsFactTable.AsEnumerable().Any(row => row.Field<string>("Doc") == doc && row.Field<string>("Type") == type && row.Field<string>("Cod") == cod))
                         {
                             continue;
                         }
