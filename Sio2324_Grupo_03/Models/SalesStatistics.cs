@@ -2,8 +2,8 @@
 {
     public class SalesStatistics
     {
-        public decimal NetAmountEarnedQuartile { get; set; }
-        public decimal GrossAmountQuartile { get; set; }
+        public double NetAmountEarnedQuartile { get; set; }
+        public double GrossAmountQuartile { get; set; }
         public int QuantitySalesQuartile { get; set; }
     }
 }
