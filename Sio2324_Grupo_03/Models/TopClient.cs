@@ -3,6 +3,6 @@
     public class TopClient
     {
         public int ClientNIF { get; set; }
-        public decimal SalesAmount { get; set; }
+        public double SalesAmount { get; set; }
     }
 }

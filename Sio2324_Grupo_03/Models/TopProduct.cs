@@ -3,6 +3,6 @@
     public class TopProduct
     {
         public string? ProductCode { get; set; } // Declare as nullable to avoid null reference exceptions
-        public decimal SalesAmount { get; set; }
+        public double SalesAmount { get; set; }
     }
 }
