@@ -6,14 +6,16 @@
 // Bulk insert the data table into the database
 // Close the connection
 
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.NetworkInformation;
 using System.Reflection.Metadata;
 
 namespace ExtractDataFromCSV
 {
     public static class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             try
             {
@@ -28,9 +30,8 @@ namespace ExtractDataFromCSV
                     .Build();
 
                 // Start SQL Connection and open it
-                SqlConnection sqlConnection = new(
-                    configuration["ConnectionStrings:Databasename01"]
-                );
+                string sqlConnectionString = configuration[key: "ConnectionStrings:Databasename01"];
+                SqlConnection sqlConnection = new(sqlConnectionString);
 
                 sqlConnection.Open();
 
@@ -479,6 +480,52 @@ namespace ExtractDataFromCSV
                     dataTableInvoiceDimension.Rows.Add(invoice.Key.Item1, invoice.Key.Item2, invoice.Value);
                 }
 
+                // Truncate all tables
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_SalesFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_PurchasesFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_MovementsFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_SalesFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_PurchasesFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_MovementsFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_SalesFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_PurchasesFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+                using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_MovementsFactTable", sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
                 using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.SalesFactTable", sqlConnection))
                 {
                     sqlCommand.ExecuteNonQuery();
@@ -574,7 +621,7 @@ namespace ExtractDataFromCSV
                 }
 
                 // SqlBulkCopy for the Sales Fact Table
-                using (SqlBulkCopy bulkCopy = new(sqlConnection))
+                using (SqlBulkCopy bulkCopy = new(sqlConnectionString, SqlBulkCopyOptions.FireTriggers))
                 {
                     bulkCopy.DestinationTableName = "dbo.SalesFactTable";
 
@@ -596,7 +643,7 @@ namespace ExtractDataFromCSV
                 }
 
                 // SqlBulkCopy for the Purchases Fact Table
-                using (SqlBulkCopy bulkCopy = new(sqlConnection))
+                using (SqlBulkCopy bulkCopy = new(sqlConnectionString, SqlBulkCopyOptions.FireTriggers))
                 {
                     bulkCopy.DestinationTableName = "dbo.PurchasesFactTable";
 
@@ -619,7 +666,7 @@ namespace ExtractDataFromCSV
                 }
 
                 // SqlBulkCopy for the Movements Fact Table
-                using (SqlBulkCopy bulkCopy = new(sqlConnection))
+                using (SqlBulkCopy bulkCopy = new(sqlConnectionString, SqlBulkCopyOptions.FireTriggers))
                 {
                     bulkCopy.DestinationTableName = "dbo.MovementsFactTable";
 
