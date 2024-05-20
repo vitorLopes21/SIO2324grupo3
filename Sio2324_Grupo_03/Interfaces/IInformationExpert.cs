@@ -28,5 +28,8 @@
 
         // Method to retrieve the purchases made to suppliers per quartile
         List<Suppliers> GetPurchasesFromSuppliersPerQuartile();
+
+        // Method to retrieve the ranking of the average daily sales per quartile
+        List<Sales> GetAVGDailySalesPerQuartile();
     }
 }

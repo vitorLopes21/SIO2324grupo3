@@ -116,5 +116,42 @@
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the most sold products per quartile.");
             }
         }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the average daily sales per quartile
+        /// </summary>
+        /// <returns>The average daily sales per quartile</returns>
+        [HttpGet("avg-daily-sales-per-quartile")]
+        public IActionResult GetAVGDailySalesPerQuartile()
+        {
+            try
+            {
+                // Retrieve the ranking of the most sold products per quartile
+                var AVGDailySales = _informationService.GetAVGDailySalesPerQuartile();
+
+                // Create the returning json object
+                var productObjects = AVGDailySales.Select(sales => new
+                {
+                    sales.Quartile,
+                    sales.Money
+                }).ToList();
+
+                // Create a new object that includes the caption and the products
+                var jsonObjectReturned = new
+                {
+                    Caption = "List of the avg daily sales per quartile",
+                    Products = productObjects
+                };
+
+                // Return HTTP 200 OK response with the most sold products data
+                return Ok(jsonObjectReturned);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the avg daily sales per quartile.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the avg daily sales per quartile.");
+            }
+        }
     }
 }

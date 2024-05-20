@@ -127,5 +127,32 @@
 
             return mostSoldProducts;
         }
+
+
+        /// <summary>
+        /// Function to get the average daily sales per quartile
+        /// </summary>
+        /// <returns>The list of the average daily sales per quartile</returns>
+        public List<Sales> GetAVGDailySalesPerQuartile()
+        {
+            // Create a list to store the average daily sales
+            List<Sales> AVGDailySales = new();
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[AverageDailySalesByQuartile]";
+            var results = _context.Sales.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the TopProduct objects
+            foreach (var result in results)
+            {
+                AVGDailySales.Add(new Sales
+                {
+                    Quartile = result.Quartile,
+                    Money = result.Money
+                });
+            }
+
+            return AVGDailySales;
+        }
     }
 }
