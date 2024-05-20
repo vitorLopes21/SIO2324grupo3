@@ -27,6 +27,12 @@
         List<Product> GetMostSoldProductsPerQuartile();
 
         // Method to retrieve the purchases made to suppliers per quartile
-        List<Supplier> GetPurchasesFromSuppliersPerQuartile();
+        List<Suppliers> GetPurchasesFromSuppliersPerQuartile();
+
+        // Method to retrieve the ranking of the average daily sales per quartile
+        List<Sales> GetAVGDailySalesPerQuartile();
+
+        // Method to retrieve the ranking of the montly sales mode by quartile
+        List<Sales> GetMonthlySalesModeByQuartile();
     }
 }

@@ -3,10 +3,9 @@
     public class DataContext : DbContext
     {
         public DbSet<SalesStatistics> SalesStatistics { get; set; }
-
+        public DbSet<Sales> Sales { get; set; }
         public DbSet<Product> Products { get; set; }
-
-        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Suppliers> Suppliers { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -15,8 +14,9 @@
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SalesStatistics>().HasNoKey();
+            modelBuilder.Entity<Sales>().HasNoKey();
             modelBuilder.Entity<Product>().HasNoKey();
-            modelBuilder.Entity<Supplier>().HasNoKey();
+            modelBuilder.Entity<Suppliers>().HasNoKey();
             modelBuilder.Entity<Client>().HasNoKey();
         }
     }
