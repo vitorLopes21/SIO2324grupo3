@@ -31,5 +31,8 @@
 
         // Method to retrieve the ranking of the average daily sales per quartile
         List<Sales> GetAVGDailySalesPerQuartile();
+
+        // Method to retrieve the ranking of the montly sales mode by quartile
+        List<Sales> GetMonthlySalesModeByQuartile();
     }
 }

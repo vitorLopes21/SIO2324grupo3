@@ -155,5 +155,33 @@
 
             return AVGDailySales;
         }
+
+
+        /// <summary>
+        /// Function to get the montly sales mode by quartile
+        /// </summary>
+        /// <returns>The list of the montly sales mode by quartile</returns>
+        public List<Sales> GetMonthlySalesModeByQuartile()
+        {
+            // Create a list to store the average daily sales
+            List<Sales> MonthlySalesMode = new();
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[MonthlySalesModeByQuartile]";
+            var results = _context.Sales.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the TopProduct objects
+            foreach (var result in results)
+            {
+                MonthlySalesMode.Add(new Sales
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    Money = result.Money
+                });
+            }
+
+            return MonthlySalesMode;
+        }
     }
 }
