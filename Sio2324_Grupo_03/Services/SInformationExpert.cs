@@ -147,6 +147,7 @@
             {
                 AVGDailySales.Add(new Sales
                 {
+                    Year = result.Year,
                     Quartile = result.Quartile,
                     Money = result.Money
                 });

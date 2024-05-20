@@ -132,6 +132,7 @@
                 // Create the returning json object
                 var productObjects = AVGDailySales.Select(sales => new
                 {
+                    sales.Year,
                     sales.Quartile,
                     sales.Money
                 }).ToList();
