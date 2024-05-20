@@ -78,9 +78,9 @@
         /// Function to get the purchases from suppliers per quartile
         /// </summary>
         /// <returns>The list of the purchases from suppliers per quartile</returns>
-        public List<Supplier> GetPurchasesFromSuppliersPerQuartile()
+        public List<Suppliers> GetPurchasesFromSuppliersPerQuartile()
         {
-            List<Supplier> purchasesFromSuppliers = new();
+            List<Suppliers> purchasesFromSuppliers = new();
 
             // Execute the stored procedure and map the results to Supplier
             string sqlCommand = "EXEC [dbo].[PurchasesFromSuppliersPerQuartile]";
@@ -89,7 +89,7 @@
             // Map the stored procedure results to the Supplier objects
             foreach (var result in results)
             {
-                purchasesFromSuppliers.Add(new Supplier
+                purchasesFromSuppliers.Add(new Suppliers
                 {
                     Quartile = result.Quartile,
                     Supplier = result.Supplier,

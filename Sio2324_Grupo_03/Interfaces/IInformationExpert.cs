@@ -27,6 +27,6 @@
         List<Product> GetMostSoldProductsPerQuartile();
 
         // Method to retrieve the purchases made to suppliers per quartile
-        List<Supplier> GetPurchasesFromSuppliersPerQuartile();
+        List<Suppliers> GetPurchasesFromSuppliersPerQuartile();
     }
 }
