@@ -27,4 +27,8 @@
 		<Content Include="..\appsettings.json" pack="false" Link="appsettings.json" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\ExtractDataFromCSV\ExtractDataFromCSV.csproj" />
+	</ItemGroup>
+
 </Project>

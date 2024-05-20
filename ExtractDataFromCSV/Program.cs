@@ -5,12 +5,6 @@
 // Insert each line into the data table
 // Bulk insert the data table into the database
 // Close the connection
-
-using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
-using System.Net.NetworkInformation;
-using System.Reflection.Metadata;
-
 namespace ExtractDataFromCSV
 {
     public static class Program
