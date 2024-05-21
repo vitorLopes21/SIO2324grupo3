@@ -42,37 +42,90 @@
             return salesStats;
         }
 
-        public List<TopClient> GetTop3ClientsByValuePerDay(int year, int month, int day)
+        public List<Client> GetTop3ClientsByValuePerDay(int year, int month, int day)
         {
             throw new NotImplementedException();
         }
 
-        public List<TopClient> GetTop3ClientsByValuePerMonth(int year, int month)
+        public List<Client> GetTop3ClientsByValuePerMonth(int year, int month)
         {
             throw new NotImplementedException();
         }
 
-        public List<TopClient> GetTop3ClientsByValuePerQuartile(int year, int quartile)
+        public List<Client> GetTop3ClientsByValuePerQuartile(int year, int quartile)
         {
             throw new NotImplementedException();
         }
 
-        public List<TopProduct> GetTop3SoldProductsPerDay(int year, int month, int day)
+        public List<Product> GetTop3SoldProductsPerDay(int year, int month, int day)
         {
             throw new NotImplementedException();
         }
 
         // Implementation of GetTop3SoldProductsPerMonth
-        public List<TopProduct> GetTop3SoldProductsPerMonth(int year, int month)
+        public List<Product> GetTop3SoldProductsPerMonth(int year, int month)
         {
             // Implement your logic to fetch top products from the database
             throw new NotImplementedException();
         }
 
-        public List<TopProduct> GetTop3SoldProductsPerQuartile(int year, int quartile)
+        public List<Product> GetTop3SoldProductsPerQuartile(int year, int quartile)
         {
             throw new NotImplementedException();
         }
-        // Other interface methods can be implemented here
+
+        /// <summary>
+        /// Function to get the purchases from suppliers per quartile
+        /// </summary>
+        /// <returns>The list of the purchases from suppliers per quartile</returns>
+        public List<Supplier> GetPurchasesFromSuppliersPerQuartile()
+        {
+            List<Supplier> purchasesFromSuppliers = new();
+
+            // Execute the stored procedure and map the results to Supplier
+            string sqlCommand = "EXEC [dbo].[PurchasesFromSuppliersPerQuartile]";
+            var results = _context.Suppliers.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the Supplier objects
+            foreach (var result in results)
+            {
+                purchasesFromSuppliers.Add(new Supplier
+                {
+                    Quartile = result.Quartile,
+                    Supplier = result.Supplier,
+                    SpentMoney = result.SpentMoney
+                });
+            }
+
+            return purchasesFromSuppliers;
+        }
+
+        /// <summary>
+        /// Function to get the most sold products per quartile
+        /// </summary>
+        /// <returns>The list of the most sold products per quartile</returns>
+        public List<Product> GetMostSoldProductsPerQuartile()
+        {
+            // Create a list to store the most sold products
+            List<Product> mostSoldProducts = new();
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[MostSoldProductsByQuartile]";
+            var results = _context.Products.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the TopProduct objects
+            foreach (var result in results)
+            {
+                mostSoldProducts.Add(new Product
+                {
+                    Quartile = result.Quartile,
+                    Family = result.Family,
+                    Description = result.Description,
+                    MoneyEarnedFromSales = result.MoneyEarnedFromSales
+                });
+            }
+
+            return mostSoldProducts;
+        }
     }
 }
