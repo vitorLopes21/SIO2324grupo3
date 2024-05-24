@@ -18,8 +18,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\appsettings.Development.json" pack="false" Link="appsettings.Development.json" CopyToOutputDirectory="Always" />
 		<Content Include="..\appsettings.json" pack="false" Link="appsettings.json" CopyToOutputDirectory="Always" />
+		<Content Include="..\appsettings.Development.json" pack="false" Link="appsettings.Development.json" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 
 </Project>
