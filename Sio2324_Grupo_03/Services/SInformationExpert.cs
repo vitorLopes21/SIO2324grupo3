@@ -3,10 +3,12 @@
     public class SInformationExpert : IInformationExpert
     {
         private readonly DataContext _context;
+        private readonly ILogger<SInformationExpert> _logger;
 
-        public SInformationExpert(DataContext context)
+        public SInformationExpert(DataContext context, ILogger<SInformationExpert> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -16,9 +18,9 @@
         /// <param name="month">Month of the sales</param>
         /// <param name="day">Day of the sales</param>
         /// <returns>The sales statistics for a specific time period</returns>
-        public object CalculateSalesStatsForDay([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
+        public object CalculateSalesStatsForDay(int year, int month, int day)
         {
-            SalesStatistics salesStatistics = new();
+            List<DailySalesStatistics> salesStatistics = new();
 
             // Create parameters for the stored procedure
             SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
@@ -26,15 +28,21 @@
             SqlParameter dayParam = new("@day_param", SqlDbType.Int) { Value = day };
 
             // Execute the stored procedure and map the results to Object
-            string sql = "EXEC CalculateSalesStatsForDay @year_param, @month_param, @day_param";
-            var result = _context.SalesStatistics.FromSqlRaw(sql, yearParam, monthParam, dayParam).First();
+            string sql = "EXEC [dbo].[CalculateSalesStatsForDay] @year_param, @month_param, @day_param";
+            var results = _context.DailySalesStatistics.FromSqlRaw(sql, yearParam, monthParam, dayParam).ToList();
 
-            if (result != null)
+            foreach (var result in results)
             {
                 // Map the stored procedure result to the Object object
-                salesStatistics.NetAmountEarned = result.NetAmountEarned;
-                salesStatistics.GrossAmountEarned = result.GrossAmountEarned;
-                salesStatistics.QuantitySales = result.QuantitySales;
+                salesStatistics.Add(new DailySalesStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    Day = result.Day,
+                    NetAmountEarned = result.NetAmountEarned,
+                    GrossAmountEarned = result.GrossAmountEarned,
+                    QuantitySold = result.QuantitySold
+                });
             }
 
             return salesStatistics;
@@ -46,24 +54,29 @@
         /// <param name="year">Year of the sales</param>
         /// <param name="month">Month of the sales</param>
         /// <returns>The sales statistics for a specific time period</returns>
-        public object CalculateSalesStatsForMonth([FromQuery] int year, [FromQuery] int month)
+        public object CalculateSalesStatsForMonth(int year, int month)
         {
-            SalesStatistics salesStats = new();
+            List<MonthSalesStatistics> salesStats = new();
 
             // Create parameters for the stored procedure
             SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
             SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
 
             // Execute the stored procedure and map the results to Object
-            string sql = "EXEC CalculateSalesStatsForMonth @year_param, @month_param";
-            var result = _context.SalesStatistics.FromSqlRaw(sql, yearParam, monthParam).First();
+            string sql = "EXEC [dbo].[CalculateSalesStatsForMonth] @year_param, @month_param";
+            var results = _context.MonthSalesStatistics.FromSqlRaw(sql, yearParam, monthParam).ToList();
 
-            if (result != null)
+            foreach (var result in results)
             {
                 // Map the stored procedure result to the Object object
-                salesStats.NetAmountEarned = result.NetAmountEarned;
-                salesStats.GrossAmountEarned = result.GrossAmountEarned;
-                salesStats.QuantitySales = result.QuantitySales;
+                salesStats.Add(new MonthSalesStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    NetAmountEarned = result.NetAmountEarned,
+                    GrossAmountEarned = result.GrossAmountEarned,
+                    QuantitySold = result.QuantitySold
+                });
             }
 
             return salesStats;
@@ -75,24 +88,29 @@
         /// <param name="year">Year of the sales</param>
         /// <param name="quartile">Quartile of the sales</param>
         /// <returns>The sales statistics for a specific time period</returns>
-        public object CalculateSalesStatsForQuartile([FromQuery] int year, [FromQuery] int quartile)
+        public object CalculateSalesStatsForQuartile(int year, int quartile)
         {
-            SalesStatistics salesStats = new();
+            List<QuartileSalesStatistics> salesStats = new();
 
             // Create parameters for the stored procedure
             SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
             SqlParameter quartileParam = new("@quartile_param", SqlDbType.Int) { Value = quartile };
 
             // Execute the stored procedure and map the results to Object
-            string sql = "EXEC CalculateSalesStatsForQuartile @year_param, @quartile_param";
-            var result = _context.SalesStatistics.FromSqlRaw(sql, yearParam, quartileParam).First();
+            string sql = "EXEC [dbo].[CalculateSalesStatsForQuartile] @year_param, @quartile_param";
+            var results = _context.QuartileSalesStatistics.FromSqlRaw(sql, yearParam, quartileParam).ToList();
 
-            if (result != null)
+            foreach (var result in results)
             {
                 // Map the stored procedure result to the Object object
-                salesStats.NetAmountEarned = result.NetAmountEarned;
-                salesStats.GrossAmountEarned = result.GrossAmountEarned;
-                salesStats.QuantitySales = result.QuantitySales;
+                salesStats.Add(new QuartileSalesStatistics
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    NetAmountEarned = result.NetAmountEarned,
+                    GrossAmountEarned = result.GrossAmountEarned,
+                    QuantitySold = result.QuantitySold
+                });
             }
 
             return salesStats;
@@ -105,29 +123,30 @@
         /// <param name="month">Month of the sales</param>
         /// <param name="day">Day of the sales</param>
         /// <returns>A list of the top 3 clients for a specific time period</returns>
-        public object GetTop3ClientsByValuePerDay([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
+        public object GetTop3ClientsByValuePerDay(int year, int month, int day)
         {
-            List<Client> clients = new();
+            List<DailyClientStatistics> clients = new();
 
             // Create parameters for the stored procedure
-            SqlParameter yearParam = new("@year", SqlDbType.Int) { Value = year };
-            SqlParameter monthParam = new("@month", SqlDbType.Int) { Value = month };
-            SqlParameter dayParam = new("@day", SqlDbType.Int) { Value = day };
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
+            SqlParameter dayParam = new("@day_param", SqlDbType.Int) { Value = day };
 
             // Execute the stored procedure and map the results to Client
             string sqlCommand = "EXEC [dbo].[GetTop3ClientsByValuePerDay] @year_param, @month_param, @day_param";
-            var results = _context.Clients.FromSqlRaw(sqlCommand, yearParam, monthParam, dayParam).ToList();
+            var results = _context.DailyClientsStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam, dayParam).ToList();
 
             // Map the stored procedure results to the Client objects
             foreach (var result in results)
             {
-                clients.Add(new Client
+                clients.Add(new DailyClientStatistics
                 {
                     Year = result.Year,
                     Month = result.Month,
                     Day = result.Day,
                     ClientName = result.ClientName,
-                    SpentMoney = result.SpentMoney
+                    SpentMoney = result.SpentMoney,
+                    BoughtProducts = result.BoughtProducts
                 });
             }
 
@@ -147,27 +166,28 @@
         /// <param name="year">Year of the sales</param>
         /// <param name="month">Month of the sales</param>
         /// <returns>A list of the top 3 clients for a specific time period</returns>
-        public object GetTop3ClientsByValuePerMonth([FromQuery] int year, [FromQuery] int month)
+        public object GetTop3ClientsByValuePerMonth(int year, int month)
         {
-            List<Client> clients = new();
+            List<MonthClientStatistics> clients = new();
 
             // Create parameters for the stored procedure
-            SqlParameter yearParam = new("@year", SqlDbType.Int) { Value = year };
-            SqlParameter monthParam = new("@month", SqlDbType.Int) { Value = month };
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
 
             // Execute the stored procedure and map the results to Client
             string sqlCommand = "EXEC [dbo].[GetTop3ClientsByValuePerMonth] @year_param, @month_param";
-            var results = _context.Clients.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
+            var results = _context.MonthlyClientsStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
 
             // Map the stored procedure results to the Client objects
             foreach (var result in results)
             {
-                clients.Add(new Client
+                clients.Add(new MonthClientStatistics
                 {
                     Year = result.Year,
                     Month = result.Month,
                     ClientName = result.ClientName,
-                    SpentMoney = result.SpentMoney
+                    SpentMoney = result.SpentMoney,
+                    BoughtProducts = result.BoughtProducts
                 });
             }
 
@@ -187,27 +207,28 @@
         /// <param name="year">Year of the sales</param>
         /// <param name="quartile">Quartile of the sales</param>
         /// <returns>A list of the top 3 clients for a specific time period</returns>
-        public object GetTop3ClientsByValuePerQuartile([FromQuery] int year, [FromQuery] int quartile)
+        public object GetTop3ClientsByValuePerQuartile(int year, int quartile)
         {
-            List<Client> clients = new();
+            List<QuartileClientStatistics> clients = new();
 
             // Create parameters for the stored procedure
-            SqlParameter yearParam = new("@year", SqlDbType.Int) { Value = year };
-            SqlParameter quartileParam = new("@quartile", SqlDbType.Int) { Value = quartile };
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter quartileParam = new("@quartile_param", SqlDbType.Int) { Value = quartile };
 
             // Execute the stored procedure and map the results to Client
             string sqlCommand = "EXEC [dbo].[GetTop3ClientsByValuePerQuartile] @year_param, @quartile_param";
-            var results = _context.Clients.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
+            var results = _context.QuartileClientsStatistics.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
 
             // Map the stored procedure results to the Client objects
             foreach (var result in results)
             {
-                clients.Add(new Client
+                clients.Add(new QuartileClientStatistics
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
                     ClientName = result.ClientName,
-                    SpentMoney = result.SpentMoney
+                    SpentMoney = result.SpentMoney,
+                    BoughtProducts = result.BoughtProducts
                 });
             }
 
@@ -228,23 +249,23 @@
         /// <param name="month">Month of the sales</param>
         /// <param name="day">Day of the sales</param>
         /// <returns>A list of the top 3 sold products for a specific time period</returns>
-        public object GetTop3SoldProductsPerDay([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
+        public object GetTop3SoldProductsPerDay(int year, int month, int day)
         {
-            List<Product> products = new();
+            List<DailyProductStatistics> products = new();
 
             // Create parameters for the stored procedure
-            SqlParameter yearParam = new("@year", SqlDbType.Int) { Value = year };
-            SqlParameter monthParam = new("@month", SqlDbType.Int) { Value = month };
-            SqlParameter dayParam = new("@day", SqlDbType.Int) { Value = day };
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
+            SqlParameter dayParam = new("@day_param", SqlDbType.Int) { Value = day };
 
             // Execute the stored procedure and map the results to Product
             string sqlCommand = "EXEC [dbo].[GetTop3SoldProductsPerDay] @year_param, @month_param, @day_param";
-            var results = _context.Products.FromSqlRaw(sqlCommand, yearParam, monthParam, dayParam).ToList();
+            var results = _context.DailyProductStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam, dayParam).ToList();
 
             // Map the stored procedure results to the Product objects
             foreach (var result in results)
             {
-                products.Add(new Product
+                products.Add(new DailyProductStatistics
                 {
                     Year = result.Year,
                     Month = result.Month,
@@ -271,22 +292,22 @@
         /// <param name="year">Year of the sales</param>
         /// <param name="month">Month of the sales</param>
         /// <returns>The list of the top 3 sold products for a specific time period</returns>
-        public object GetTop3SoldProductsPerMonth([FromQuery] int year, [FromQuery] int month)
+        public object GetTop3SoldProductsPerMonth(int year, int month)
         {
-            List<Product> products = new();
+            List<MonthProductStatistics> products = new();
 
             // Create parameters for the stored procedure
-            SqlParameter yearParam = new("@year", SqlDbType.Int) { Value = year };
-            SqlParameter monthParam = new("@month", SqlDbType.Int) { Value = month };
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
 
             // Execute the stored procedure and map the results to Product
             string sqlCommand = "EXEC [dbo].[GetTop3SoldProductsPerMonth] @year_param, @month_param";
-            var results = _context.Products.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
+            var results = _context.MonthProductStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
 
             // Map the stored procedure results to the Product objects
             foreach (var result in results)
             {
-                products.Add(new Product
+                products.Add(new MonthProductStatistics
                 {
                     Year = result.Year,
                     Month = result.Month,
@@ -312,22 +333,22 @@
         /// <param name="year">Year of the sales</param>
         /// <param name="quartile">Quartile of the sales</param>
         /// <returns>The list of the top 3 sold products for a specific time period</returns>
-        public object GetTop3SoldProductsPerQuartile([FromQuery] int year, [FromQuery] int quartile)
+        public object GetTop3SoldProductsPerQuartile(int year, int quartile)
         {
-            List<Product> products = new();
+            List<QuartileProductStatistics> products = new();
 
             // Create parameters for the stored procedure
-            SqlParameter yearParam = new("@year", SqlDbType.Int) { Value = year };
-            SqlParameter quartileParam = new("@quartile", SqlDbType.Int) { Value = quartile };
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter quartileParam = new("@quartile_param", SqlDbType.Int) { Value = quartile };
 
             // Execute the stored procedure and map the results to Product
             string sqlCommand = "EXEC [dbo].[GetTop3SoldProductsPerQuartile] @year_param, @quartile_param";
-            var results = _context.Products.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
+            var results = _context.QuartileProductStatistics.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
 
             // Map the stored procedure results to the Product objects
             foreach (var result in results)
             {
-                products.Add(new Product
+                products.Add(new QuartileProductStatistics
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
@@ -353,16 +374,16 @@
         /// <returns>The list of the purchases from suppliers per quartile</returns>
         public object GetPurchasesFromSuppliersPerQuartile()
         {
-            List<Supplier> purchasesFromSuppliers = new();
+            List<QuartileSupplierStatistics> purchasesFromSuppliers = new();
 
             // Execute the stored procedure and map the results to Supplier
             string sqlCommand = "EXEC [dbo].[PurchasesFromSuppliersPerQuartile]";
-            var results = _context.Suppliers.FromSqlRaw(sqlCommand).ToList();
+            var results = _context.QuartileSupplierStatistics.FromSqlRaw(sqlCommand).ToList();
 
             // Map the stored procedure results to the Supplier objects
             foreach (var result in results)
             {
-                purchasesFromSuppliers.Add(new Supplier
+                purchasesFromSuppliers.Add(new QuartileSupplierStatistics
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
@@ -388,16 +409,16 @@
         public object GetMostSoldProductsPerQuartile()
         {
             // Create a list to store the most sold products
-            List<Product> mostSoldProducts = new();
+            List<QuartileProductStatistics> mostSoldProducts = new();
 
             // Execute the stored procedure and map the results to Product
             string sqlCommand = "EXEC [dbo].[MostSoldProductsByQuartile]";
-            var results = _context.Products.FromSqlRaw(sqlCommand).ToList();
+            var results = _context.QuartileProductStatistics.FromSqlRaw(sqlCommand).ToList();
 
             // Map the stored procedure results to the TopProduct objects
             foreach (var result in results)
             {
-                mostSoldProducts.Add(new Product
+                mostSoldProducts.Add(new QuartileProductStatistics
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,

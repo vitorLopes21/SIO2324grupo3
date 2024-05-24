@@ -20,7 +20,7 @@
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
         /// <returns></returns>
         [HttpGet("sales-stats-for-quartile")]
-        public IActionResult GetSalesStatsForQuartile([FromQuery] int year, [FromQuery] int quartile)
+        public IActionResult GetSalesStatsForQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
             try
             {
@@ -46,7 +46,7 @@
         /// <param name="month">Month of the sales statistics</param>
         /// <returns>The sales statistics for the specified month</returns>
         [HttpGet("sales-stats-for-month")]
-        public IActionResult GetSalesStatsForMonth([FromQuery] int year, [FromQuery] int month)
+        public IActionResult GetSalesStatsForMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
         {
             try
             {
@@ -73,7 +73,7 @@
         /// <param name="day">Day of the sales statistics</param>
         /// <returns>The sales statistics for the specified day</returns>
         [HttpGet("sales-stats-for-day")]
-        public IActionResult GetSalesStatsForDay([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
+        public IActionResult GetSalesStatsForDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
         {
             try
             {
@@ -99,7 +99,7 @@
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
         /// <returns>The top 3 sold products for the specified quartile</returns>
         [HttpGet("top-3-sold-products-per-quartile")]
-        public IActionResult GetTop3SoldProductsPerQuartile([FromQuery] int year, [FromQuery] int quartile)
+        public IActionResult GetTop3SoldProductsPerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
             try
             {
@@ -125,7 +125,7 @@
         /// <param name="month">Month of the time period being analyzed</param>
         /// <returns>The top 3 sold products for the specified month</returns>
         [HttpGet("top-3-sold-products-per-month")]
-        public IActionResult GetTop3SoldProductsPerMonth([FromQuery] int year, [FromQuery] int month)
+        public IActionResult GetTop3SoldProductsPerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
         {
             try
             {
@@ -152,7 +152,7 @@
         /// <param name="day">Day of the time period being analyzed</param>
         /// <returns>The top 3 sold products for the specified day</returns>
         [HttpGet("top-3-sold-products-per-day")]
-        public IActionResult GetTop3SoldProductsPerDay([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
+        public IActionResult GetTop3SoldProductsPerDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
         {
             try
             {
@@ -178,7 +178,7 @@
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
         /// <returns>The top 3 clients by sales value for the specified quartile</returns>
         [HttpGet("top-3-clients-by-value-per-quartile")]
-        public IActionResult GetTop3ClientsByValuePerQuartile([FromQuery] int year, [FromQuery] int quartile)
+        public IActionResult GetTop3ClientsByValuePerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
             try
             {
@@ -204,7 +204,7 @@
         /// <param name="month">Month of the time period being analyzed</param>
         /// <returns>The top 3 clients by sales value for the specified month</returns>
         [HttpGet("top-3-clients-by-value-per-month")]
-        public IActionResult GetTop3ClientsByValuePerMonth([FromQuery] int year, [FromQuery] int month)
+        public IActionResult GetTop3ClientsByValuePerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
         {
             try
             {
@@ -231,7 +231,7 @@
         /// <param name="day">Day of the time period being analyzed</param>
         /// <returns>A list of the top 3 clients by sales value for the specified day</returns>
         [HttpGet("top-3-clients-by-value-per-day")]
-        public IActionResult GetTop3ClientsByValuePerDay([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
+        public IActionResult GetTop3ClientsByValuePerDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
         {
             try
             {
