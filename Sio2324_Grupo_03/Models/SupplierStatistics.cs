@@ -14,11 +14,17 @@
         // The name of the supplier
         public string? SupplierName { get; set; } = null;
 
+        // The city where the supplier is located
+        public string? City { get; set; } = null;
+
+        // The market where the supplier operates
+        public string? Market { get; set; } = null;
+
         // The amount of money spent by the company in a specific quartile
         public decimal SpentMoney { get; set; } = 0;
 
         // The amount of products bought by the company in a specific time period
-        public int AmountOfProductsBought { get; set; } = 0;
+        public int BoughtProducts { get; set; } = 0;
     }
 
     /// <summary>
@@ -35,11 +41,17 @@
         // The name of the supplier
         public string? SupplierName { get; set; } = null;
 
-        // The amount of money spent by the company in a specific month
+        // The city where the supplier is located
+        public string? City { get; set; } = null;
+
+        // The market where the supplier operates
+        public string? Market { get; set; } = null;
+
+        // The amount of money spent by the company in a specific quartile
         public decimal SpentMoney { get; set; } = 0;
 
         // The amount of products bought by the company in a specific time period
-        public int AmountOfProductsBought { get; set; } = 0;
+        public int BoughtProducts { get; set; } = 0;
     }
 
     /// <summary>
@@ -59,10 +71,16 @@
         // The name of the supplier
         public string? SupplierName { get; set; } = null;
 
+        // The city where the supplier is located
+        public string? City { get; set; } = null;
+
+        // The market where the supplier operates
+        public string? Market { get; set; } = null;
+
         // The amount of money spent by the company in a specific quartile
         public decimal SpentMoney { get; set; } = 0;
 
         // The amount of products bought by the company in a specific time period
-        public int AmountOfProductsBought { get; set; } = 0;
+        public int BoughtProducts { get; set; } = 0;
     }
 }

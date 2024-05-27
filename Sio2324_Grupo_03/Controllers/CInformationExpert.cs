@@ -172,6 +172,85 @@
         }
 
         /// <summary>
+        /// HTTP GET method to retrieve the top 3 suppliers by sales value for a specific quartile
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="quartile">Quartile of the year, from 1 to 4</param>
+        /// <returns>A list of the top 3 suppliers by sales value for the specified quartile</returns>
+        [HttpGet("top-3-suppliers-by-value-per-quartile")]
+        public IActionResult GetTop3SuppliersByValuePerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
+        {
+            try
+            {
+                // Retrieve the top 3 suppliers by sales value for the specified quartile
+                var top3Suppliers = _informationService.GetTop3SuppliersByValuePerQuartile(year, quartile);
+
+                // Return HTTP 200 OK response with the top 3 suppliers data
+                return Ok(top3Suppliers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 suppliers by sales value per quartile.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 suppliers by sales value per quartile.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the top 3 suppliers by sales value for a specific month
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="month">Month of the time period being analyzed</param>
+        /// <returns>A list of the top 3 suppliers by sales value for the specified month</returns>
+        [HttpGet("top-3-suppliers-by-value-per-month")]
+        public IActionResult GetTop3SuppliersByValuePerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
+        {
+            try
+            {
+                // Retrieve the top 3 suppliers by sales value for the specified month
+                var top3Suppliers = _informationService.GetTop3SuppliersByValuePerMonth(year, month);
+
+                // Return HTTP 200 OK response with the top 3 suppliers data
+                return Ok(top3Suppliers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 suppliers by sales value per month.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 suppliers by sales value per month.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the top 3 suppliers by sales value for a specific day
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="month">Month of the time period being analyzed</param>
+        /// <param name="day">Day of the time period being analyzed</param>
+        /// <returns>A list of the top 3 suppliers by sales value for the specified day</returns>
+        [HttpGet("top-3-suppliers-by-value-per-day")]
+        public IActionResult GetTop3SuppliersByValuePerDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
+        {
+            try
+            {
+                // Retrieve the top 3 suppliers by sales value for the specified day
+                var top3Suppliers = _informationService.GetTop3SuppliersByValuePerDay(year, month, day);
+
+                // Return HTTP 200 OK response with the top 3 suppliers data
+                return Ok(top3Suppliers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 suppliers by sales value per day.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 suppliers by sales value per day.");
+            }
+        }
+
+        /// <summary>
         /// HTTP GET method to retrieve the top 3 clients by sales value for a specific quartile
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
