@@ -18,7 +18,7 @@ namespace Sio2324_Grupo_03.Controllers
         /// </summary>
         /// <param name="year">Year of the sales statistics</param>
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
-        /// <returns></returns>
+        /// <returns>The sales statistics for the specified quartile</returns>
         [HttpGet("sales-stats-for-quartile")]
         public IActionResult GetSalesStatsForQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
@@ -97,14 +97,14 @@ namespace Sio2324_Grupo_03.Controllers
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
-        /// <returns>The top 3 sold products for the specified quartile</returns>
-        [HttpGet("top-3-sold-products-per-quartile")]
-        public IActionResult GetTop3SoldProductsPerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
+        /// <returns>A list of the top 3 sold products for the specified quartile</returns>
+        [HttpGet("top-3-most-sold-products-per-quartile")]
+        public IActionResult GetTop3MostSoldProductsPerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
             try
             {
                 // Retrieve the top 3 sold products for the specified quartile
-                var top3SoldProducts = _informationService.GetTop3SoldProductsPerQuartile(year, quartile);
+                var top3SoldProducts = _informationService.GetTop3MostSoldProductsPerQuartile(year, quartile);
 
                 // Return HTTP 200 OK response with the top 3 sold products data
                 return Ok(top3SoldProducts);
@@ -119,11 +119,64 @@ namespace Sio2324_Grupo_03.Controllers
         }
 
         /// <summary>
+        /// HTTP GET method to retrieve the top 3 sold products for a specific month
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="month">Month of the time period being analyzed</param>
+        /// <returns>A list of the top 3 sold products for the specified month</returns>
+        [HttpGet("top-3-most-sold-products-per-month")]
+        public IActionResult GetTop3MostSoldProductsPerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
+        {
+            try
+            {
+                // Retrieve the top 3 sold products for the specified month
+                var top3SoldProducts = _informationService.GetTop3MostSoldProductsPerMonth(year, month);
+
+                // Return HTTP 200 OK response with the top 3 sold products data
+                return Ok(top3SoldProducts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 sold products per month.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 sold products per month.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the top 3 sold products for a specific day
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="month">Month of the time period being analyzed</param>
+        /// <param name="day">Day of the time period being analyzed</param>
+        /// <returns>A list of the top 3 sold products for the specified day</returns>
+        [HttpGet("top-3-most-sold-products-per-day")]
+        public IActionResult GetTop3MostSoldProductsPerDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
+        {
+            try
+            {
+                // Retrieve the top 3 sold products for the specified day
+                var top3SoldProducts = _informationService.GetTop3MostSoldProductsPerDay(year, month, day);
+
+                // Return HTTP 200 OK response with the top 3 sold products data
+                return Ok(top3SoldProducts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 sold products per day.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 sold products per day.");
+            }
+        }
+
+        /// <summary>
         /// HTTP GET method to retrieve the top 3 least sold products for a specific quartile
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
-        /// <returns>The top 3 least sold products for the specified quartile</returns>
+        /// <returns>A list of the top 3 least sold products for the specified quartile</returns>
         [HttpGet("top-3-least-sold-products-per-quartile")]
         public IActionResult GetTop3LeastSoldProductsPerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
@@ -144,39 +197,11 @@ namespace Sio2324_Grupo_03.Controllers
             }
         }
 
-
-        /// <summary>
-        /// HTTP GET method to retrieve the top 3 sold products for a specific month
-        /// </summary>
-        /// <param name="year">Year of the time period being analyzed</param>
-        /// <param name="month">Month of the time period being analyzed</param>
-        /// <returns>The top 3 sold products for the specified month</returns>
-        [HttpGet("top-3-sold-products-per-month")]
-        public IActionResult GetTop3SoldProductsPerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
-        {
-            try
-            {
-                // Retrieve the top 3 sold products for the specified month
-                var top3SoldProducts = _informationService.GetTop3SoldProductsPerMonth(year, month);
-
-                // Return HTTP 200 OK response with the top 3 sold products data
-                return Ok(top3SoldProducts);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving the top 3 sold products per month.");
-
-                // Return HTTP 500 Internal Server Error response with an error message
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 sold products per month.");
-            }
-        }
-
-
         /// HTTP GET method to retrieve the top 3 least sold products for a specific month
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
         /// <param name="month">Month of the time period being analyzed</param>
-        /// <returns>The top 3 least sold products for the specified month</returns>
+        /// <returns>A list of the top 3 least sold products for the specified month</returns>
         [HttpGet("top-3-least-sold-products-per-month")]
         public IActionResult GetTop3LeastSoldProductsPerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
         {
@@ -197,32 +222,30 @@ namespace Sio2324_Grupo_03.Controllers
             }
         }
 
-
-
         /// <summary>
-        /// HTTP GET method to retrieve the top 3 sold products for a specific day
+        /// HTTP GET method to retrieve the top 3 least sold products for a specific day
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
         /// <param name="month">Month of the time period being analyzed</param>
         /// <param name="day">Day of the time period being analyzed</param>
-        /// <returns>The top 3 sold products for the specified day</returns>
-        [HttpGet("top-3-sold-products-per-day")]
-        public IActionResult GetTop3SoldProductsPerDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
+        /// <returns>A list of the top 3 least sold products for the specified day</returns>
+        [HttpGet("top-3-least-sold-products-per-day")]
+        public IActionResult GetTop3LeastSoldProductsPerDay([FromQuery] int year = 2023, [FromQuery] int month = 01, [FromQuery] int day = 02)
         {
             try
             {
-                // Retrieve the top 3 sold products for the specified day
-                var top3SoldProducts = _informationService.GetTop3SoldProductsPerDay(year, month, day);
+                // Retrieve the top 3 least sold products for the specified day
+                var top3LeastSoldProducts = _informationService.GetTop3LeastSoldProductsPerDay(year, month, day);
 
-                // Return HTTP 200 OK response with the top 3 sold products data
-                return Ok(top3SoldProducts);
+                // Return HTTP 200 OK response with the top 3 least sold products data
+                return Ok(top3LeastSoldProducts);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving the top 3 sold products per day.");
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 least sold products per day.");
 
                 // Return HTTP 500 Internal Server Error response with an error message
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 sold products per day.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 least sold products per day.");
             }
         }
 
@@ -310,7 +333,7 @@ namespace Sio2324_Grupo_03.Controllers
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
         /// <param name="quartile">Quartile of the year, from 1 to 4</param>
-        /// <returns>The top 3 clients by sales value for the specified quartile</returns>
+        /// <returns>A list of the top 3 clients by sales value for the specified quartile</returns>
         [HttpGet("top-3-clients-by-value-per-quartile")]
         public IActionResult GetTop3ClientsByValuePerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
         {
@@ -336,7 +359,7 @@ namespace Sio2324_Grupo_03.Controllers
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
         /// <param name="month">Month of the time period being analyzed</param>
-        /// <returns>The top 3 clients by sales value for the specified month</returns>
+        /// <returns>A list of the top 3 clients by sales value for the specified month</returns>
         [HttpGet("top-3-clients-by-value-per-month")]
         public IActionResult GetTop3ClientsByValuePerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
         {
@@ -427,6 +450,52 @@ namespace Sio2324_Grupo_03.Controllers
                 _logger.LogError(ex, "An error occurred while calculating purchases from suppliers for quartile.");
                 // Return HTTP 500 Internal Server Error response with an error message
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while calculating purchases from suppliers for quartile.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the average daily sales per quartile
+        /// </summary>
+        /// <returns>The average daily sales per quartile</returns>
+        [HttpGet("average-daily-sales-per-quartile")]
+        public IActionResult GetAVGDailySalesPerQuartile()
+        {
+            try
+            {
+                // Retrieve the ranking of the most sold products per quartile
+                var AverageDailySalesPerQuartile = _informationService.GetAverageDailySalesPerQuartile();
+
+                // Return HTTP 200 OK response with the most sold products data
+                return Ok(AverageDailySalesPerQuartile);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the avg daily sales per quartile.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the avg daily sales per quartile.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the Monthly Sales Mode By Quartile
+        /// </summary>
+        /// <returns>The Monthly Sales Mode By Quartile</returns>
+        [HttpGet("month-sales-mode-by-quartile")]
+        public IActionResult GetMonthlySalesModeByQuartile()
+        {
+            try
+            {
+                // Retrieve the ranking of the most sold products per quartile
+                var monthSalesMode = _informationService.GetMonthSalesModeByQuartile();
+
+                // Return HTTP 200 OK response with the most sold products data
+                return Ok(monthSalesMode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the montly sales mode by quartile.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the montly sales mode by quartile.");
             }
         }
     }

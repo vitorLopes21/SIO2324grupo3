@@ -35,11 +35,11 @@ namespace ExtractDataFromCSV
                 {
                     DataTable dataTableDateDimension = new("dbo.Date_Dimension");
                     DataTable dataTableIdentityDimension = new("dbo.Identity_Dimension");
-                    DataTable dataTableInvoiceDimension = new("dbo.Invoice_Dimension");
+                    DataTable dataTableInvoiceDimension = new("dbo.Invoices");
                     DataTable dataTableProductDimension = new("dbo.Product_Dimension");
-                    DataTable dataTableSalesFactTable = new("dbo.SalesFactTable");
-                    DataTable dataTablePurchasesFactTable = new("dbo.PurchasesFactTable");
-                    DataTable dataTableMovementsFactTable = new("dbo.MovementsFactTable");
+                    DataTable dataTableSalesFactTable = new("dbo.Sales");
+                    DataTable dataTablePurchasesFactTable = new("dbo.Purchases");
+                    DataTable dataTableMovementsFactTable = new("dbo.Movements");
 
                     // Create the columns for the Date Dimension table
                     dataTableDateDimension.Columns.Add("Date_Key", typeof(string));
@@ -144,11 +144,11 @@ namespace ExtractDataFromCSV
                             // If the NIF does not exist in the DataTable, add a new row
                             string name = reader.GetString(2);
                             string phoneNumber = reader.GetString(3);
-                            string email = reader.GetString(4);
-                            string address = reader.GetString(6);
-                            string postalCode = reader.GetString(7);
-                            string city = reader.GetString(8);
-                            string countryRegion = reader.GetString(9);
+                            string email = reader.GetString(5);
+                            string address = reader.GetString(9);
+                            string postalCode = reader.GetString(10);
+                            string city = reader.GetString(11);
+                            string countryRegion = reader.GetString(12);
                             string market = reader.GetString(0);
 
                             if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("NIF") == nif))
@@ -561,22 +561,22 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.SalesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Sales", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.PurchasesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Purchases", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.MovementsFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Movements", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Invoice_Dimension", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Invoices", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -631,7 +631,7 @@ namespace ExtractDataFromCSV
                     // SqlBulkCopy for the Invoice Dimension table
                     using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.Default, sqlTransaction))
                     {
-                        bulkCopy.DestinationTableName = "dbo.Invoice_Dimension";
+                        bulkCopy.DestinationTableName = "dbo.Invoices";
 
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
@@ -658,7 +658,7 @@ namespace ExtractDataFromCSV
                     // SqlBulkCopy for the Sales Fact Table
                     using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.FireTriggers, sqlTransaction))
                     {
-                        bulkCopy.DestinationTableName = "dbo.SalesFactTable";
+                        bulkCopy.DestinationTableName = "dbo.Sales";
 
                         bulkCopy.ColumnMappings.Add("NIF_Client", "[NIF_Client]");
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
@@ -680,7 +680,7 @@ namespace ExtractDataFromCSV
                     // SqlBulkCopy for the Purchases Fact Table
                     using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.FireTriggers, sqlTransaction))
                     {
-                        bulkCopy.DestinationTableName = "dbo.PurchasesFactTable";
+                        bulkCopy.DestinationTableName = "dbo.Purchases";
 
                         bulkCopy.ColumnMappings.Add("NIF_Client", "[NIF_Client]");
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
@@ -703,7 +703,7 @@ namespace ExtractDataFromCSV
                     // SqlBulkCopy for the Movements Fact Table
                     using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.FireTriggers, sqlTransaction))
                     {
-                        bulkCopy.DestinationTableName = "dbo.MovementsFactTable";
+                        bulkCopy.DestinationTableName = "dbo.Movements";
 
                         bulkCopy.ColumnMappings.Add("Cod", "[Cod]");
                         bulkCopy.ColumnMappings.Add("Doc", "[Document]");
