@@ -23,6 +23,13 @@
 
         object GetTop3ClientsByValuePerDay(int year, int month, int day);
 
+        // Method to retrieve the top 3 suppliers by sales value for a specific time period
+        object GetTop3SuppliersByValuePerQuartile(int year, int quartile);
+
+        object GetTop3SuppliersByValuePerMonth(int year, int month);
+
+        object GetTop3SuppliersByValuePerDay(int year, int month, int day);
+
         // Method to retrieve the ranking of the most sold products per quartile
         object GetMostSoldProductsPerQuartile();
 

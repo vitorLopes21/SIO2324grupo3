@@ -45,7 +45,14 @@
                 });
             }
 
-            return salesStatistics;
+            // Create a new object that includes the caption and the sales statistics
+            var salesStatsReturned = new
+            {
+                Caption = "Sales statistics for a day",
+                SalesStatistics = salesStatistics
+            };
+
+            return salesStatsReturned;
         }
 
         /// <summary>
@@ -79,7 +86,14 @@
                 });
             }
 
-            return salesStats;
+            // Create a new object that includes the caption and the sales statistics
+            var salesStatsReturned = new
+            {
+                Caption = "Sales statistics for a month",
+                SalesStatistics = salesStats
+            };
+
+            return salesStatsReturned;
         }
 
         /// <summary>
@@ -113,7 +127,14 @@
                 });
             }
 
-            return salesStats;
+            // Create a new object that includes the caption and the sales statistics
+            var salesStatsReturned = new
+            {
+                Caption = "Sales statistics for a quartile",
+                SalesStatistics = salesStats
+            };
+
+            return salesStatsReturned;
         }
 
         /// <summary>
@@ -243,6 +264,138 @@
         }
 
         /// <summary>
+        /// Get the top 3 suppliers by value per quartile
+        /// </summary>
+        /// <param name="year">Year of the purchases</param>
+        /// <param name="month">Month of the purchases</param>
+        /// <param name="day">Day of the purchases</param>
+        /// <returns>A list of the top 3 suppliers for a specific time period</returns>
+        public object GetTop3SuppliersByValuePerDay(int year, int month, int day)
+        {
+            List<DailySupplierStatistics> suppliers = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
+            SqlParameter dayParam = new("@day_param", SqlDbType.Int) { Value = day };
+
+            // Execute the stored procedure and map the results to Supplier
+            string sqlCommand = "EXEC [dbo].[GetTop3SuppliersByValuePerDay] @year_param, @month_param, @day_param";
+            var results = _context.DailySupplierStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam, dayParam).ToList();
+
+            // Map the stored procedure results to the Supplier objects
+            foreach (var result in results)
+            {
+                suppliers.Add(new DailySupplierStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    Day = result.Day,
+                    SupplierName = result.SupplierName,
+                    City = result.City,
+                    Market = result.Market,
+                    SpentMoney = result.SpentMoney,
+                    BoughtProducts = result.BoughtProducts
+                });
+            }
+
+            // Create a new object that includes the caption and the suppliers
+            var suppliersReturned = new
+            {
+                Caption = "Top 3 suppliers by value per day",
+                Suppliers = suppliers
+            };
+
+            return suppliersReturned;
+        }
+
+        /// <summary>
+        /// Get the top 3 suppliers by value per month
+        /// </summary>
+        /// <param name="year">Year of the purchases</param>
+        /// <param name="month">Month of the purchases</param>
+        /// <returns>A list of the top 3 suppliers for a specific time period</returns>
+        public object GetTop3SuppliersByValuePerMonth(int year, int month)
+        {
+            List<MonthSupplierStatistics> suppliers = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
+
+            // Execute the stored procedure and map the results to Supplier
+            string sqlCommand = "EXEC [dbo].[GetTop3SuppliersByValuePerMonth] @year_param, @month_param";
+            var results = _context.MonthSupplierStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
+
+            // Map the stored procedure results to the Supplier objects
+            foreach (var result in results)
+            {
+                suppliers.Add(new MonthSupplierStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    SupplierName = result.SupplierName,
+                    City = result.City,
+                    Market = result.Market,
+                    SpentMoney = result.SpentMoney,
+                    BoughtProducts = result.BoughtProducts
+                });
+            }
+
+            // Create a new object that includes the caption and the suppliers
+            var suppliersReturned = new
+            {
+                Caption = "Top 3 suppliers by value per month",
+                Suppliers = suppliers
+            };
+
+            return suppliersReturned;
+        }
+
+        /// <summary>
+        /// Get the top 3 suppliers by value per quartile
+        /// </summary>
+        /// <param name="year">Year of the purchases</param>
+        /// <param name="quartile">Month of the purchases</param>
+        /// <returns>A list of the top 3 suppliers for a specific time period</returns>
+        public object GetTop3SuppliersByValuePerQuartile(int year, int quartile)
+        {
+            List<QuartileSupplierStatistics> suppliers = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter quartileParam = new("@quartile_param", SqlDbType.Int) { Value = quartile };
+
+            // Execute the stored procedure and map the results to Supplier
+            string sqlCommand = "EXEC [dbo].[GetTop3SuppliersByValuePerQuartile] @year_param, @quartile_param";
+            var results = _context.QuartileSupplierStatistics.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
+
+            // Map the stored procedure results to the Supplier objects
+            foreach (var result in results)
+            {
+                suppliers.Add(new QuartileSupplierStatistics
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    SupplierName = result.SupplierName,
+                    City = result.City,
+                    Market = result.Market,
+                    SpentMoney = result.SpentMoney,
+                    BoughtProducts = result.BoughtProducts
+                });
+            }
+
+            // Create a new object that includes the caption and the suppliers
+            var suppliersReturned = new
+            {
+                Caption = "Top 3 suppliers by value per quartile",
+                Suppliers = suppliers
+            };
+
+            return suppliersReturned;
+        }
+
+        /// <summary>
         /// Get the top 3 sold products per day
         /// </summary>
         /// <param name="year">Year of the sales</param>
@@ -291,7 +444,7 @@
         /// </summary>
         /// <param name="year">Year of the sales</param>
         /// <param name="month">Month of the sales</param>
-        /// <returns>The list of the top 3 sold products for a specific time period</returns>
+        /// <returns>A list of the top 3 sold products for a specific time period</returns>
         public object GetTop3SoldProductsPerMonth(int year, int month)
         {
             List<MonthProductStatistics> products = new();
@@ -332,7 +485,7 @@
         /// </summary>
         /// <param name="year">Year of the sales</param>
         /// <param name="quartile">Quartile of the sales</param>
-        /// <returns>The list of the top 3 sold products for a specific time period</returns>
+        /// <returns>A list of the top 3 sold products for a specific time period</returns>
         public object GetTop3SoldProductsPerQuartile(int year, int quartile)
         {
             List<QuartileProductStatistics> products = new();
@@ -371,7 +524,7 @@
         /// <summary>
         /// Function to get the purchases from suppliers per quartile
         /// </summary>
-        /// <returns>The list of the purchases from suppliers per quartile</returns>
+        /// <returns>A list of the purchases from suppliers per quartile</returns>
         public object GetPurchasesFromSuppliersPerQuartile()
         {
             List<QuartileSupplierStatistics> purchasesFromSuppliers = new();
@@ -405,7 +558,7 @@
         /// <summary>
         /// Function to get the most sold products per quartile
         /// </summary>
-        /// <returns>The list of the most sold products per quartile</returns>
+        /// <returns>A list of the most sold products per quartile</returns>
         public object GetMostSoldProductsPerQuartile()
         {
             // Create a list to store the most sold products
