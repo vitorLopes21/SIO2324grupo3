@@ -23,6 +23,8 @@
 
         public DbSet<DailySupplierStatistics> DailySupplierStatistics { get; set; }
 
+        public DbSet<QuartilePurchasesFromSuppliers> QuartilePurchasesFromSuppliers { get; set; }
+
         // The clients of the company
         public DbSet<QuartileClientStatistics> QuartileClientsStatistics { get; set; }
 
@@ -47,6 +49,7 @@
             modelBuilder.Entity<QuartileSupplierStatistics>().HasNoKey();
             modelBuilder.Entity<MonthSupplierStatistics>().HasNoKey();
             modelBuilder.Entity<DailySupplierStatistics>().HasNoKey();
+            modelBuilder.Entity<QuartilePurchasesFromSuppliers>().HasNoKey();
 
             modelBuilder.Entity<QuartileClientStatistics>().HasNoKey();
             modelBuilder.Entity<MonthClientStatistics>().HasNoKey();

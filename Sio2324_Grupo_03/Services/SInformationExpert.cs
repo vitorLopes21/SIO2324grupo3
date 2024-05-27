@@ -527,21 +527,22 @@
         /// <returns>A list of the purchases from suppliers per quartile</returns>
         public object GetPurchasesFromSuppliersPerQuartile()
         {
-            List<QuartileSupplierStatistics> purchasesFromSuppliers = new();
+            List<QuartilePurchasesFromSuppliers> purchasesFromSuppliers = new();
 
             // Execute the stored procedure and map the results to Supplier
             string sqlCommand = "EXEC [dbo].[PurchasesFromSuppliersPerQuartile]";
-            var results = _context.QuartileSupplierStatistics.FromSqlRaw(sqlCommand).ToList();
+            var results = _context.QuartilePurchasesFromSuppliers.FromSqlRaw(sqlCommand).ToList();
 
             // Map the stored procedure results to the Supplier objects
             foreach (var result in results)
             {
-                purchasesFromSuppliers.Add(new QuartileSupplierStatistics
+                purchasesFromSuppliers.Add(new QuartilePurchasesFromSuppliers
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
                     SupplierName = result.SupplierName,
-                    SpentMoney = result.SpentMoney
+                    SpentMoney = result.SpentMoney,
+                    AmountOfProductsBought = result.AmountOfProductsBought
                 });
             }
 
@@ -585,7 +586,7 @@
             var mostSoldProductsReturned = new
             {
                 Caption = "List of the most sold products per quartile",
-                Suppliers = mostSoldProducts
+                Products = mostSoldProducts
             };
 
             return mostSoldProductsReturned;
