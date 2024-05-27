@@ -1,4 +1,4 @@
-﻿namespace Sio2324_Grupo_03.Controllers
+namespace Sio2324_Grupo_03.Controllers
 {
     [Route("api")]
     [ApiController]
@@ -119,6 +119,33 @@
         }
 
         /// <summary>
+        /// HTTP GET method to retrieve the top 3 least sold products for a specific quartile
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="quartile">Quartile of the year, from 1 to 4</param>
+        /// <returns>The top 3 least sold products for the specified quartile</returns>
+        [HttpGet("top-3-least-sold-products-per-quartile")]
+        public IActionResult GetTop3LeastSoldProductsPerQuartile([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
+        {
+            try
+            {
+                // Retrieve the top 3 least sold products for the specified quartile
+                var top3LeastSoldProducts = _informationService.GetTop3LeastSoldProductsPerQuartile(year, quartile);
+
+                // Return HTTP 200 OK response with the top 3 least sold products data
+                return Ok(top3LeastSoldProducts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 least sold products per quartile.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 least sold products per quartile.");
+            }
+        }
+
+
+        /// <summary>
         /// HTTP GET method to retrieve the top 3 sold products for a specific month
         /// </summary>
         /// <param name="year">Year of the time period being analyzed</param>
@@ -143,6 +170,34 @@
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 sold products per month.");
             }
         }
+
+
+        /// HTTP GET method to retrieve the top 3 least sold products for a specific month
+        /// </summary>
+        /// <param name="year">Year of the time period being analyzed</param>
+        /// <param name="month">Month of the time period being analyzed</param>
+        /// <returns>The top 3 least sold products for the specified month</returns>
+        [HttpGet("top-3-least-sold-products-per-month")]
+        public IActionResult GetTop3LeastSoldProductsPerMonth([FromQuery] int year = 2023, [FromQuery] int month = 01)
+        {
+            try
+            {
+                // Retrieve the top 3 least sold products for the specified month
+                var top3LeastSoldProducts = _informationService.GetTop3LeastSoldProductsPerMonth(year, month);
+
+                // Return HTTP 200 OK response with the top 3 least sold products data
+                return Ok(top3LeastSoldProducts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the top 3 least sold products per month.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the top 3 least sold products per month.");
+            }
+        }
+
+
 
         /// <summary>
         /// HTTP GET method to retrieve the top 3 sold products for a specific day
