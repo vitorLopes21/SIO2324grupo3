@@ -440,6 +440,57 @@
         }
 
         /// <summary>
+        /// Get the top 3 least sold products per day
+        /// </summary>
+        /// <param name="year">Year of the sales</param>
+        /// <param name="month">Month of the sales</param>
+        /// <param name="day">Day of the sales</param>
+        /// <returns>A list of the top 3 least sold products for a specific time period</returns>
+        public object GetTop3LeastSoldProductsPerDay(int year, int month, int day)
+        {
+            List<DailyProductStatistics> products = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
+            SqlParameter dayParam = new("@day_param", SqlDbType.Int) { Value = day };
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[GetTop3LeastSoldProductsPerDay] @year_param, @month_param, @day_param";
+            var results = _context.DailyProductStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam, dayParam).ToList();
+
+            // Map the stored procedure results to the Product objects
+            foreach (var result in results)
+            {
+                products.Add(new DailyProductStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    Day = result.Day,
+                    Family = result.Family,
+                    Description = result.Description,
+                    MoneyEarnedFromSales = result.MoneyEarnedFromSales
+                });
+            }
+
+            // Order the products by MoneyEarnedFromSales in ascending order to get the least sold products
+            var sortedProducts = products.OrderBy(p => p.MoneyEarnedFromSales).ToList();
+
+            // Take the top 3 least sold products
+            var top3LeastSoldProducts = sortedProducts.Take(3);
+
+            // Create a new object that includes the caption and the products
+            var productsReturned = new
+            {
+                Caption = "Top 3 least sold products per day",
+                Products = top3LeastSoldProducts
+            };
+
+            return productsReturned;
+        }
+
+
+        /// <summary>
         /// Get the top 3 sold products per month
         /// </summary>
         /// <param name="year">Year of the sales</param>
@@ -481,6 +532,54 @@
         }
 
         /// <summary>
+        /// Get the top 3 least sold products per month
+        /// </summary>
+        /// <param name="year">Year of the sales</param>
+        /// <param name="month">Month of the sales</param>
+        /// <returns>A list of the top 3 least sold products for a specific time period</returns>
+        public object GetTop3LeastSoldProductsPerMonth(int year, int month)
+        {
+            List<MonthProductStatistics> products = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter monthParam = new("@month_param", SqlDbType.Int) { Value = month };
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[GetTop3LeastSoldProductsPerMonth] @year_param, @month_param";
+            var results = _context.MonthProductStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
+
+            // Map the stored procedure results to the Product objects
+            foreach (var result in results)
+            {
+                products.Add(new MonthProductStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    Family = result.Family,
+                    Description = result.Description,
+                    MoneyEarnedFromSales = result.MoneyEarnedFromSales
+                });
+            }
+
+            // Order the products by MoneyEarnedFromSales in ascending order to get the least sold products
+            var sortedProducts = products.OrderBy(p => p.MoneyEarnedFromSales).ToList();
+
+            // Take the top 3 least sold products
+            var top3LeastSoldProducts = sortedProducts.Take(3);
+
+            // Create a new object that includes the caption and the products
+            var productsReturned = new
+            {
+                Caption = "Top 3 least sold products per month",
+                Products = top3LeastSoldProducts
+            };
+
+            return productsReturned;
+        }
+
+
+        /// <summary>
         /// Get the top 3 sold products per quartile
         /// </summary>
         /// <param name="year">Year of the sales</param>
@@ -520,6 +619,54 @@
 
             return productsReturned;
         }
+
+        /// <summary>
+        /// Get the top 3 least sold products per quartile
+        /// </summary>
+        /// <param name="year">Year of the sales</param>
+        /// <param name="quartile">Quartile of the sales</param>
+        /// <returns>A list of the top 3 least sold products for a specific time period</returns>
+        public object GetTop3LeastSoldProductsPerQuartile(int year, int quartile)
+        {
+            List<QuartileProductStatistics> products = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter quartileParam = new("@quartile_param", SqlDbType.Int) { Value = quartile };
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[GetTop3LeastSoldProductsPerQuartile] @year_param, @quartile_param";
+            var results = _context.QuartileProductStatistics.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
+
+            // Map the stored procedure results to the Product objects
+            foreach (var result in results)
+            {
+                products.Add(new QuartileProductStatistics
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    Family = result.Family,
+                    Description = result.Description,
+                    MoneyEarnedFromSales = result.MoneyEarnedFromSales
+                });
+            }
+
+            // Order the products by MoneyEarnedFromSales in ascending order to get the least sold products
+            var sortedProducts = products.OrderBy(p => p.MoneyEarnedFromSales).ToList();
+
+            // Take the top 3 least sold products
+            var top3LeastSoldProducts = sortedProducts.Take(3);
+
+            // Create a new object that includes the caption and the products
+            var productsReturned = new
+            {
+                Caption = "Top 3 least sold products per quartile",
+                Products = top3LeastSoldProducts
+            };
+
+            return productsReturned;
+        }
+
 
         /// <summary>
         /// Function to get the purchases from suppliers per quartile

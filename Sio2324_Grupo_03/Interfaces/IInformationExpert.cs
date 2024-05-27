@@ -16,6 +16,14 @@
 
         object GetTop3SoldProductsPerDay(int year, int month, int day);
 
+
+        //Method to get the top 3 least sold products for a specific time period 
+        object GetTop3LeastSoldProductsPerQuartile(int year, int quartile);
+
+        object GetTop3LeastSoldProductsPerMonth(int year, int month);
+        
+        object GetTop3LeastSoldProductsPerDay(int year, int month, int day);
+
         // Method to retrieve the top 3 clients by sales value for a specific time period
         object GetTop3ClientsByValuePerQuartile(int year, int quartile);
 
