@@ -42,5 +42,11 @@
 
         // Method to retrieve the purchases made to suppliers per quartile
         object GetPurchasesFromSuppliersPerQuartile();
+
+        // Method to get average daily sales over the quartiles of a year
+        object GetAverageDailySalesPerQuartile();
+
+        // Method to retrieve the ranking of the montly sales mode by quartile
+        object GetMonthSalesModeByQuartile();
     }
 }

@@ -452,5 +452,51 @@ namespace Sio2324_Grupo_03.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while calculating purchases from suppliers for quartile.");
             }
         }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the average daily sales per quartile
+        /// </summary>
+        /// <returns>The average daily sales per quartile</returns>
+        [HttpGet("average-daily-sales-per-quartile")]
+        public IActionResult GetAVGDailySalesPerQuartile()
+        {
+            try
+            {
+                // Retrieve the ranking of the most sold products per quartile
+                var AverageDailySalesPerQuartile = _informationService.GetAverageDailySalesPerQuartile();
+
+                // Return HTTP 200 OK response with the most sold products data
+                return Ok(AverageDailySalesPerQuartile);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the avg daily sales per quartile.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the avg daily sales per quartile.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the Monthly Sales Mode By Quartile
+        /// </summary>
+        /// <returns>The Monthly Sales Mode By Quartile</returns>
+        [HttpGet("month-sales-mode-by-quartile")]
+        public IActionResult GetMonthlySalesModeByQuartile()
+        {
+            try
+            {
+                // Retrieve the ranking of the most sold products per quartile
+                var monthSalesMode = _informationService.GetMonthSalesModeByQuartile();
+
+                // Return HTTP 200 OK response with the most sold products data
+                return Ok(monthSalesMode);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the montly sales mode by quartile.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the montly sales mode by quartile.");
+            }
+        }
     }
 }

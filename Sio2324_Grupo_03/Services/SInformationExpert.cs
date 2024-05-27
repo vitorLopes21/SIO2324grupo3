@@ -197,7 +197,7 @@
 
             // Execute the stored procedure and map the results to Client
             string sqlCommand = "EXEC [dbo].[GetTop3ClientsByValuePerMonth] @year_param, @month_param";
-            var results = _context.MonthlyClientsStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
+            var results = _context.MonthClientsStatistics.FromSqlRaw(sqlCommand, yearParam, monthParam).ToList();
 
             // Map the stored procedure results to the Client objects
             foreach (var result in results)
@@ -734,6 +734,74 @@
             };
 
             return mostSoldProductsReturned;
+        }
+
+        /// <summary>
+        /// Function to get the average daily sales per quartile
+        /// </summary>
+        /// <returns>The list of the average daily sales per quartile</returns>
+        public object GetAverageDailySalesPerQuartile()
+        {
+            // Create a list to store the average daily sales
+            List<QuartileAverageDailySales> averageDailySales = new();
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[AverageDailySalesByQuartile]";
+            var results = _context.AverageDailySales.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the TopProduct objects
+            foreach (var result in results)
+            {
+                averageDailySales.Add(new QuartileAverageDailySales
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    Money = result.Money
+                });
+            }
+
+            // Create a new object that includes the caption and the sales
+            var averageDailySalesReturned = new
+            {
+                Caption = "List of the most sold products per quartile",
+                Sales = averageDailySales
+            };
+
+            return averageDailySalesReturned;
+        }
+
+        /// <summary>
+        /// Function to get the montly sales mode by quartile
+        /// </summary>
+        /// <returns>The list of the montly sales mode by quartile</returns>
+        public object GetMonthSalesModeByQuartile()
+        {
+            // Create a list to store the average daily sales
+            List<QuartileMonthSalesMode> monthlySalesMode = new();
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[MonthSalesModeByQuartile]";
+            var results = _context.MonthSalesModes.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the TopProduct objects
+            foreach (var result in results)
+            {
+                monthlySalesMode.Add(new QuartileMonthSalesMode
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    Money = result.Money
+                });
+            }
+
+            // Create a new object that includes the caption and the products
+            var monthlySalesModeReturned = new
+            {
+                Caption = "List of the montly sales mode by quartile",
+                MonthlySalesMode = monthlySalesMode
+            };
+
+            return monthlySalesModeReturned;
         }
     }
 }
