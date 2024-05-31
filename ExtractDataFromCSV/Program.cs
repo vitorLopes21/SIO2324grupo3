@@ -33,7 +33,6 @@ namespace ExtractDataFromCSV
 
                 try
                 {
-                    DataTable dataTableDateDimension = new("dbo.Date_Dimension");
                     DataTable dataTableIdentityDimension = new("dbo.Identity_Dimension");
                     DataTable dataTableInvoiceDimension = new("dbo.Invoices");
                     DataTable dataTableProductDimension = new("dbo.Product_Dimension");
@@ -41,16 +40,7 @@ namespace ExtractDataFromCSV
                     DataTable dataTablePurchasesFactTable = new("dbo.Purchases");
                     DataTable dataTableMovementsFactTable = new("dbo.Movements");
 
-                    // Create the columns for the Date Dimension table
-                    dataTableDateDimension.Columns.Add("Date_Key", typeof(string));
-                    dataTableDateDimension.Columns.Add("Day", typeof(int));
-                    dataTableDateDimension.Columns.Add("Month", typeof(int));
-                    dataTableDateDimension.Columns.Add("Year", typeof(int));
-
-                    // Unique dates set
-                    HashSet<string> uniqueDates = new();
-
-                    // Create the columns for the Identity Dimension table
+                    // Create the columns for the Identities table
                     dataTableIdentityDimension.Columns.Add("NIF", typeof(int));
                     dataTableIdentityDimension.Columns.Add("Name", typeof(string));
                     dataTableIdentityDimension.Columns.Add("PhoneNumber", typeof(string));
@@ -61,15 +51,15 @@ namespace ExtractDataFromCSV
                     dataTableIdentityDimension.Columns.Add("Country_Region", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Market", typeof(string));
 
-                    // Create the columns for the Invoice Dimension table
+                    // Create the columns for the Invoices table
                     dataTableInvoiceDimension.Columns.Add("Number", typeof(string));
                     dataTableInvoiceDimension.Columns.Add("Type", typeof(string));
-                    dataTableInvoiceDimension.Columns.Add("Date_Key", typeof(string));
+                    dataTableInvoiceDimension.Columns.Add("InvoiceDate", typeof(string));
 
-                    // Create a data structure that takes Number and Type as unique keys and Date_Key as the value
+                    // Create a data structure that takes Number and Type as unique keys and Date of the document as the value
                     Dictionary<(string, string), string> invoiceDateKeys = new();
 
-                    // Create the columns for the Product Dimension table
+                    // Create the columns for the Products table
                     dataTableProductDimension.Columns.Add("Cod", typeof(string));
                     dataTableProductDimension.Columns.Add("Family", typeof(string));
                     dataTableProductDimension.Columns.Add("Description", typeof(string));
@@ -81,7 +71,7 @@ namespace ExtractDataFromCSV
                     // As they will come from different files
                     Dictionary<string, IList<string>> productColumns = new();
 
-                    // Create the columns for the Sales Fact Table
+                    // Create the columns for the Sales Table
                     dataTableSalesFactTable.Columns.Add("NIF_Client", typeof(int));
                     dataTableSalesFactTable.Columns.Add("Number", typeof(string));
                     dataTableSalesFactTable.Columns.Add("Type", typeof(string));
@@ -96,7 +86,7 @@ namespace ExtractDataFromCSV
                     dataTableSalesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(double));
                     dataTableSalesFactTable.Columns.Add("VATOriginalCurrency", typeof(double));
 
-                    // Create the columns for the Purchases Fact Table
+                    // Create the columns for the Purchases Table
                     dataTablePurchasesFactTable.Columns.Add("NIF_Client", typeof(int));
                     dataTablePurchasesFactTable.Columns.Add("Number", typeof(string));
                     dataTablePurchasesFactTable.Columns.Add("Type", typeof(string));
@@ -112,7 +102,7 @@ namespace ExtractDataFromCSV
                     dataTablePurchasesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(double));
                     dataTablePurchasesFactTable.Columns.Add("VATOriginalCurrency", typeof(double));
 
-                    // Create the columns for the Movements Fact Table
+                    // Create the columns for the Movements Table
                     dataTableMovementsFactTable.Columns.Add("Cod", typeof(string));
                     dataTableMovementsFactTable.Columns.Add("Doc", typeof(string));
                     dataTableMovementsFactTable.Columns.Add("Type", typeof(string));
@@ -125,6 +115,8 @@ namespace ExtractDataFromCSV
 
                     // Read the files in ..\Data
                     string filePath = Path.Combine(slnFolder, ".\\Data");
+
+                    Console.WriteLine("Reading file with data from clients");
 
                     // Read the Clients and Suppliers CSV files and insert the data into the Identity Dimension table
                     using (var stream = File.Open($"{filePath}\\Clients.xlsx", FileMode.Open, FileAccess.Read))
@@ -158,6 +150,8 @@ namespace ExtractDataFromCSV
                         }
                     }
 
+                    Console.WriteLine("Reading file with data from suppliers");
+
                     // Read the Suppliers Excel file and insert the data into the Identity Dimension table
                     using (var stream = File.Open($"{filePath}\\Suppliers.xlsx", FileMode.Open, FileAccess.Read))
                     {
@@ -188,6 +182,8 @@ namespace ExtractDataFromCSV
                             }
                         }
                     }
+
+                    Console.WriteLine("Reading file with data from products");
 
                     // Read the Products Excel file and insert the data into the Product Dimension table
                     using (var stream = File.Open($"{filePath}\\Products.xlsx", FileMode.Open, FileAccess.Read))
@@ -247,6 +243,8 @@ namespace ExtractDataFromCSV
                         }
                     }
 
+                    Console.WriteLine("Reading file with data from sale invoices");
+
                     // Read the Sales Invoices Excel file and insert the data into the Sales Fact Table
                     using (var stream = File.Open($"{filePath}\\SaleInvoices.xlsx", FileMode.Open, FileAccess.Read))
                     {
@@ -277,13 +275,11 @@ namespace ExtractDataFromCSV
                             double grossAmountOriginalCurrency = reader.GetDouble(14);
                             double vatOriginalCurrency = reader.GetDouble(15);
 
-                            _ = uniqueDates.Add(dateKey);
-
                             string[] dateKeyParts = dateKey.Split('-');
                             dateKeyParts[1] = dateKeyParts[1].Length < 2 ? "0" + dateKeyParts[1] : dateKeyParts[1];
                             dateKeyParts[2] = dateKeyParts[2].Length < 2 ? "0" + dateKeyParts[2] : dateKeyParts[2];
 
-                            dateKey = dateKeyParts[0] + dateKeyParts[1] + dateKeyParts[2];
+                            dateKey = dateKeyParts[0] + "/" + dateKeyParts[1] + "/" + dateKeyParts[2];
 
                             if (!invoiceDateKeys.ContainsKey((number, type)))
                             {
@@ -302,6 +298,8 @@ namespace ExtractDataFromCSV
                             }
                         }
                     }
+
+                    Console.WriteLine("Reading file with data from purchase invoices");
 
                     // Read the Purchase Invoices Excel file and insert the data into the Purchases Fact Table
                     using (var stream = File.Open($"{filePath}\\PurchaseInvoices.xlsx", FileMode.Open, FileAccess.Read))
@@ -334,13 +332,11 @@ namespace ExtractDataFromCSV
                             double grossAmountOriginalCurrency = reader.GetDouble(15);
                             double vatOriginalCurrency = reader.GetDouble(16);
 
-                            _ = uniqueDates.Add(dateKey);
-
                             string[] dateKeyParts = dateKey.Split('-');
                             dateKeyParts[1] = dateKeyParts[1].Length < 2 ? "0" + dateKeyParts[1] : dateKeyParts[1];
                             dateKeyParts[2] = dateKeyParts[2].Length < 2 ? "0" + dateKeyParts[2] : dateKeyParts[2];
 
-                            dateKey = dateKeyParts[0] + dateKeyParts[1] + dateKeyParts[2];
+                            dateKey = dateKeyParts[0] + "/" + dateKeyParts[1] + "/" + dateKeyParts[2];
 
                             if (!invoiceDateKeys.ContainsKey((number, type)))
                             {
@@ -359,6 +355,8 @@ namespace ExtractDataFromCSV
                             }
                         }
                     }
+
+                    Console.WriteLine("Reading file with data from stock movements");
 
                     // Read the Movements Excel file and insert the data into the Movements Fact Table
                     using (var stream = File.Open($"{filePath}\\StockMovements.xlsx", FileMode.Open, FileAccess.Read))
@@ -387,13 +385,11 @@ namespace ExtractDataFromCSV
                             double movementValue = reader.GetDouble(11);
                             string thirdParty = reader.GetString(14);
 
-                            _ = uniqueDates.Add(dateKey);
-
                             string[] dateKeyParts = dateKey.Split('-');
                             dateKeyParts[1] = dateKeyParts[1].Length < 2 ? "0" + dateKeyParts[1] : dateKeyParts[1];
                             dateKeyParts[2] = dateKeyParts[2].Length < 2 ? "0" + dateKeyParts[2] : dateKeyParts[2];
 
-                            dateKey = dateKeyParts[0] + dateKeyParts[1] + dateKeyParts[2];
+                            dateKey = dateKeyParts[0] + "/" + dateKeyParts[1] + "/" + dateKeyParts[2];
 
                             if (!invoiceDateKeys.ContainsKey((doc, type)))
                             {
@@ -425,9 +421,7 @@ namespace ExtractDataFromCSV
                             }
                             else
                             {
-                                int existingQuantityValue = int.Parse(value[0]);
-                                existingQuantityValue += existingQuantity;
-                                value[0] = existingQuantityValue.ToString();
+                                value[0] = existingQuantity.ToString();
                             }
 
                             if (dataTableMovementsFactTable.AsEnumerable().Any(row => row.Field<string>("Doc") == doc && row.Field<string>("Type") == type && row.Field<string>("Cod") == cod))
@@ -442,6 +436,8 @@ namespace ExtractDataFromCSV
                             );
                         }
                     }
+
+                    Console.WriteLine("Organizing data read so it will be written to the tables in 3rd normal form");
 
                     // For each cod in productColumns, extract the value and search for the corresponding column to extract the existing stock of each product and add it to a new column "ExistingStock"
                     for (int i = 0; i < productColumns["Cod"].Count; i++)
@@ -464,50 +460,6 @@ namespace ExtractDataFromCSV
                     {
                         dataTableProductDimension.Rows.Add(productColumns["Cod"][i], productColumns["Family"][i], productColumns["Description"][i], double.Parse(productColumns["PercentageOfVat"][i]), (productColumns["ExistingStock"][i]), double.Parse(productColumns["PurchasingPrice"][i]));
                     }
-
-                    for (int i = 0; i < uniqueDates.Count; i++)
-                    {
-                        string date = uniqueDates.ElementAt(i);
-
-                        // Get the day, month, and year from the date
-                        string[] dateParts = date.Split('-');
-
-                        int day = int.Parse(dateParts[2]);
-                        string dayString = day < 10 ? "0" + day : day.ToString();
-                        int month = int.Parse(dateParts[1]);
-                        string monthString = month < 10 ? "0" + month : month.ToString();
-                        int year = int.Parse(dateParts[0]);
-
-                        // 2024Q1
-                        string yearQuarter = year.ToString() + "Q" + ((int)Math.Ceiling(month / 3.0)).ToString();
-
-                        // 202401
-                        string yearMonth = year.ToString() + monthString;
-
-                        // 20240101
-                        string yearMonthDay = year.ToString() + monthString + dayString;
-
-                        if (!dataTableDateDimension.AsEnumerable().Any(row => row.Field<string>("Date_Key") == yearQuarter))
-                        {
-                            dataTableDateDimension.Rows.Add(yearQuarter, 0, 0, year);
-                        }
-
-                        if (!dataTableDateDimension.AsEnumerable().Any(row => row.Field<string>("Date_Key") == yearMonth))
-                        {
-                            dataTableDateDimension.Rows.Add(yearMonth, 0, month, year);
-                        }
-
-                        if (!dataTableDateDimension.AsEnumerable().Any(row => row.Field<string>("Date_Key") == yearMonthDay))
-                        {
-                            dataTableDateDimension.Rows.Add(yearMonthDay, day, month, year);
-                        }
-                    }
-
-                    // Verify the values of the dates in dataTableDateDimension
-                    //foreach (DataRow row in dataTableDateDimension.Rows)
-                    //{
-                    //    Console.WriteLine("Date_Key: " + (string?)row["Date_Key"] + " Day: " + row["Day"] + " Month:" + row["Month"] + " Year:" + row["Year"]);
-                    //}
 
                     // For each unique invoice, get the corresponding Date_Key and add it to the Invoice Dimension table
                     foreach (var invoice in invoiceDateKeys)
@@ -561,6 +513,22 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    // Delete all rows from the tables
+                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Date_Dimension", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Identity_Dimension", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Product_Dimension", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Sales", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
@@ -581,39 +549,22 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    // Delete all rows from the tables
-                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Date_Dimension", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Products", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Identity_Dimension", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Identities", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("DELETE FROM dbo.Product_Dimension", sqlConnection, sqlTransaction))
-                    {
-                        sqlCommand.ExecuteNonQuery();
-                    }
-
-                    // SqlBulkCopy for the Date Dimension table
-                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.Default, sqlTransaction))
-                    {
-                        bulkCopy.DestinationTableName = "dbo.Date_Dimension";
-
-                        bulkCopy.ColumnMappings.Add("Date_Key", "[Date_Key]");
-                        bulkCopy.ColumnMappings.Add("Day", "[Day]");
-                        bulkCopy.ColumnMappings.Add("Month", "[Month]");
-                        bulkCopy.ColumnMappings.Add("Year", "[Year]");
-
-                        bulkCopy.WriteToServer(dataTableDateDimension);
-                    }
+                    Console.WriteLine("Writing data to the tables in 3rd normal form");
 
                     // SqlBulkCopy for the Identity Dimension table
-                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.Default, sqlTransaction))
+                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.FireTriggers, sqlTransaction))
                     {
-                        bulkCopy.DestinationTableName = "dbo.Identity_Dimension";
+                        bulkCopy.DestinationTableName = "dbo.Identities";
 
                         bulkCopy.ColumnMappings.Add("NIF", "[NIF]");
                         bulkCopy.ColumnMappings.Add("Name", "[Name]");
@@ -629,21 +580,21 @@ namespace ExtractDataFromCSV
                     }
 
                     // SqlBulkCopy for the Invoice Dimension table
-                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.Default, sqlTransaction))
+                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.FireTriggers, sqlTransaction))
                     {
                         bulkCopy.DestinationTableName = "dbo.Invoices";
 
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
-                        bulkCopy.ColumnMappings.Add("Date_Key", "[Date_Key]");
+                        bulkCopy.ColumnMappings.Add("InvoiceDate", "[InvoiceDate]");
 
                         bulkCopy.WriteToServer(dataTableInvoiceDimension);
                     }
 
                     // SqlBulkCopy for the Product Dimension table
-                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.Default, sqlTransaction))
+                    using (SqlBulkCopy bulkCopy = new(sqlConnection, SqlBulkCopyOptions.FireTriggers, sqlTransaction))
                     {
-                        bulkCopy.DestinationTableName = "dbo.Product_Dimension";
+                        bulkCopy.DestinationTableName = "dbo.Products";
 
                         bulkCopy.ColumnMappings.Add("Cod", "[Cod]");
                         bulkCopy.ColumnMappings.Add("Family", "[Family]");
