@@ -83,4 +83,22 @@
         // The amount of products bought by the company in a specific time period
         public int BoughtProducts { get; set; } = 0;
     }
+
+    public class QuartilePurchasesFromSuppliers 
+    { 
+        // The year in which the product was sold
+        public int Year { get; set; } = 0;
+
+        // The quartile of the year
+        public string? Quartile { get; set; } = null;
+
+        // Name of the supplier
+        public string? SupplierName { get; set; } = null;
+
+        // Money spent in the quartile
+        public decimal SpentMoney { get; set; } = 0;
+
+        // Amount of products bought in the quartile
+        public int AmountOfProductsBought { get; set; } = 0;
+    }
 }

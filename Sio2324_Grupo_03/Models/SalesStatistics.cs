@@ -65,4 +65,34 @@
         // The quantity of products sold in a specific time period
         public int? QuantitySold { get; set; } = 0;
     }
+
+    /// <summary>
+    /// Quartile average daily sales class
+    /// </summary>
+    public class QuartileAverageDailySales
+    {
+        // The year in which the sales was made
+        public int? Year { get; set; }
+
+        // The quartile of the year in which the sales was made
+        public string? Quartile { get; set; }
+
+        // The amount of money earned by the company from the sales in a specific time period
+        public decimal Money { get; set; }
+    }
+
+    /// <summary>
+    /// Monthly sales mode class
+    /// </summary>
+    public class QuartileMonthSalesMode
+    {
+        // The year in which the sales was made
+        public int? Year { get; set; }
+
+        // The quartile of the year in which the sales was made
+        public string? Quartile { get; set; }
+
+        // The amount of money earned by the company from the sales in a specific time period
+        public decimal Money { get; set; }
+    }
 }
