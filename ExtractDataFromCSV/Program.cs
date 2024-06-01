@@ -50,11 +50,13 @@ namespace ExtractDataFromCSV
                     dataTableIdentityDimension.Columns.Add("City", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Country_Region", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Market", typeof(string));
+                    dataTableIdentityDimension.Columns.Add("CompanyId", typeof(int)).Expression = "1";
 
                     // Create the columns for the Invoices table
                     dataTableInvoiceDimension.Columns.Add("Number", typeof(string));
                     dataTableInvoiceDimension.Columns.Add("Type", typeof(string));
                     dataTableInvoiceDimension.Columns.Add("InvoiceDate", typeof(string));
+                    dataTableInvoiceDimension.Columns.Add("CompanyId", typeof(int)).Expression = "1";
 
                     // Create a data structure that takes Number and Type as unique keys and Date of the document as the value
                     Dictionary<(string, string), string> invoiceDateKeys = new();
@@ -66,13 +68,14 @@ namespace ExtractDataFromCSV
                     dataTableProductDimension.Columns.Add("PertentageOfVat", typeof(double));
                     dataTableProductDimension.Columns.Add("ExistingStock", typeof(int));
                     dataTableProductDimension.Columns.Add("PurchasingPrice", typeof(double));
+                    dataTableProductDimension.Columns.Add("CompanyId", typeof(int)).Expression = "1";
 
                     // Create a dictionary to temporarily store the extracted product columns from different fields
                     // As they will come from different files
                     Dictionary<string, IList<string>> productColumns = new();
 
                     // Create the columns for the Sales Table
-                    dataTableSalesFactTable.Columns.Add("NIF_Client", typeof(int));
+                    dataTableSalesFactTable.Columns.Add("NifClient", typeof(int));
                     dataTableSalesFactTable.Columns.Add("Number", typeof(string));
                     dataTableSalesFactTable.Columns.Add("Type", typeof(string));
                     dataTableSalesFactTable.Columns.Add("Cod", typeof(string));
@@ -85,9 +88,10 @@ namespace ExtractDataFromCSV
                     dataTableSalesFactTable.Columns.Add("NetAmountOriginalCurrency", typeof(double));
                     dataTableSalesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(double));
                     dataTableSalesFactTable.Columns.Add("VATOriginalCurrency", typeof(double));
+                    dataTableSalesFactTable.Columns.Add("CompanyId", typeof(int)).Expression = "1";
 
                     // Create the columns for the Purchases Table
-                    dataTablePurchasesFactTable.Columns.Add("NIF_Client", typeof(int));
+                    dataTablePurchasesFactTable.Columns.Add("NifClient", typeof(int));
                     dataTablePurchasesFactTable.Columns.Add("Number", typeof(string));
                     dataTablePurchasesFactTable.Columns.Add("Type", typeof(string));
                     dataTablePurchasesFactTable.Columns.Add("Cod", typeof(string));
@@ -101,6 +105,7 @@ namespace ExtractDataFromCSV
                     dataTablePurchasesFactTable.Columns.Add("NetAmountOriginalCurrency", typeof(double));
                     dataTablePurchasesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(double));
                     dataTablePurchasesFactTable.Columns.Add("VATOriginalCurrency", typeof(double));
+                    dataTablePurchasesFactTable.Columns.Add("CompanyId", typeof(int)).Expression = "1";
 
                     // Create the columns for the Movements Table
                     dataTableMovementsFactTable.Columns.Add("Cod", typeof(string));
@@ -112,6 +117,7 @@ namespace ExtractDataFromCSV
                     dataTableMovementsFactTable.Columns.Add("ExitValue", typeof(double));
                     dataTableMovementsFactTable.Columns.Add("MovementValue", typeof(double));
                     dataTableMovementsFactTable.Columns.Add("ThirdParty", typeof(string));
+                    dataTableMovementsFactTable.Columns.Add("CompanyId", typeof(int)).Expression = "1";
 
                     // Read the files in ..\Data
                     string filePath = Path.Combine(slnFolder, ".\\Data");
@@ -468,47 +474,62 @@ namespace ExtractDataFromCSV
                     }
 
                     // Truncate all tables
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_SalesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_PurchasesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_MovementsFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Movements_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_SalesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_PurchasesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_MovementsFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Movements_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_SalesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_PurchasesFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_MovementsFactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Movements_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Sales_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Movements_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -575,6 +596,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("City", "[City]");
                         bulkCopy.ColumnMappings.Add("Country_Region", "[Country_Region]");
                         bulkCopy.ColumnMappings.Add("Market", "[Market]");
+                        //bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableIdentityDimension);
                     }
@@ -587,6 +609,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
                         bulkCopy.ColumnMappings.Add("InvoiceDate", "[InvoiceDate]");
+                        //bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableInvoiceDimension);
                     }
@@ -602,6 +625,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("PertentageOfVat", "[PercentageofVAT]");
                         bulkCopy.ColumnMappings.Add("ExistingStock", "[ExistingStock]");
                         bulkCopy.ColumnMappings.Add("PurchasingPrice", "[PurchasingPrice]");
+                        //bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableProductDimension);
                     }
@@ -611,7 +635,7 @@ namespace ExtractDataFromCSV
                     {
                         bulkCopy.DestinationTableName = "dbo.Sales";
 
-                        bulkCopy.ColumnMappings.Add("NIF_Client", "[NIF_Client]");
+                        bulkCopy.ColumnMappings.Add("NifClient", "[NifClient]");
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
                         bulkCopy.ColumnMappings.Add("Cod", "[Cod]");
@@ -624,6 +648,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("NetAmountOriginalCurrency", "[NetAmountOriginalCurrency]");
                         bulkCopy.ColumnMappings.Add("GrossAmountOriginalCurrency", "[GrossAmountOriginalCurrency]");
                         bulkCopy.ColumnMappings.Add("VATOriginalCurrency", "[VATOriginalCurrency]");
+                        bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableSalesFactTable);
                     }
@@ -633,7 +658,7 @@ namespace ExtractDataFromCSV
                     {
                         bulkCopy.DestinationTableName = "dbo.Purchases";
 
-                        bulkCopy.ColumnMappings.Add("NIF_Client", "[NIF_Client]");
+                        bulkCopy.ColumnMappings.Add("NifClient", "[NifClient]");
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
                         bulkCopy.ColumnMappings.Add("Cod", "[Cod]");
@@ -647,6 +672,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("NetAmountOriginalCurrency", "[NetAmountOriginalCurrency]");
                         bulkCopy.ColumnMappings.Add("GrossAmountOriginalCurrency", "[GrossAmountOriginalCurrency]");
                         bulkCopy.ColumnMappings.Add("VATOriginalCurrency", "[VATOriginalCurrency]");
+                        bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTablePurchasesFactTable);
                     }
@@ -665,6 +691,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("ExitValue", "[ExitValue]");
                         bulkCopy.ColumnMappings.Add("MovementValue", "[MovementValue]");
                         bulkCopy.ColumnMappings.Add("ThirdParty", "[ThirdParty]");
+                        bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableMovementsFactTable);
                     }
@@ -685,7 +712,8 @@ namespace ExtractDataFromCSV
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                //Console.WriteLine(ex.Message);
             }
         }
     }
