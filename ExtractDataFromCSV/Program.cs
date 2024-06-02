@@ -41,7 +41,7 @@ namespace ExtractDataFromCSV
                     DataTable dataTableMovementsFactTable = new("dbo.Movements");
 
                     // Create the columns for the Identities table
-                    dataTableIdentityDimension.Columns.Add("NIF", typeof(int));
+                    dataTableIdentityDimension.Columns.Add("Nif", typeof(int));
                     dataTableIdentityDimension.Columns.Add("Name", typeof(string));
                     dataTableIdentityDimension.Columns.Add("PhoneNumber", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Email", typeof(string));
@@ -50,16 +50,16 @@ namespace ExtractDataFromCSV
                     dataTableIdentityDimension.Columns.Add("City", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Country_Region", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Market", typeof(string));
-                    dataTableIdentityDimension.Columns.Add("CompanyId", typeof(int)).Expression = "1";
+                    dataTableIdentityDimension.Columns.Add("CompanyId", typeof(int));
 
                     // Create the columns for the Invoices table
                     dataTableInvoiceDimension.Columns.Add("Number", typeof(string));
                     dataTableInvoiceDimension.Columns.Add("Type", typeof(string));
                     dataTableInvoiceDimension.Columns.Add("InvoiceDate", typeof(string));
-                    dataTableInvoiceDimension.Columns.Add("CompanyId", typeof(int)).Expression = "1";
+                    dataTableInvoiceDimension.Columns.Add("CompanyId", typeof(int));
 
                     // Create a data structure that takes Number and Type as unique keys and Date of the document as the value
-                    Dictionary<(string, string), string> invoiceDateKeys = new();
+                    Dictionary<(string, string, int), string> invoiceDateKeys = new();
 
                     // Create the columns for the Products table
                     dataTableProductDimension.Columns.Add("Cod", typeof(string));
@@ -68,7 +68,7 @@ namespace ExtractDataFromCSV
                     dataTableProductDimension.Columns.Add("PertentageOfVat", typeof(double));
                     dataTableProductDimension.Columns.Add("ExistingStock", typeof(int));
                     dataTableProductDimension.Columns.Add("PurchasingPrice", typeof(double));
-                    dataTableProductDimension.Columns.Add("CompanyId", typeof(int)).Expression = "1";
+                    dataTableProductDimension.Columns.Add("CompanyId", typeof(int));
 
                     // Create a dictionary to temporarily store the extracted product columns from different fields
                     // As they will come from different files
@@ -88,10 +88,10 @@ namespace ExtractDataFromCSV
                     dataTableSalesFactTable.Columns.Add("NetAmountOriginalCurrency", typeof(double));
                     dataTableSalesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(double));
                     dataTableSalesFactTable.Columns.Add("VATOriginalCurrency", typeof(double));
-                    dataTableSalesFactTable.Columns.Add("CompanyId", typeof(int)).Expression = "1";
+                    dataTableSalesFactTable.Columns.Add("CompanyId", typeof(int));
 
                     // Create the columns for the Purchases Table
-                    dataTablePurchasesFactTable.Columns.Add("NifClient", typeof(int));
+                    dataTablePurchasesFactTable.Columns.Add("NifSupplier", typeof(int));
                     dataTablePurchasesFactTable.Columns.Add("Number", typeof(string));
                     dataTablePurchasesFactTable.Columns.Add("Type", typeof(string));
                     dataTablePurchasesFactTable.Columns.Add("Cod", typeof(string));
@@ -105,7 +105,7 @@ namespace ExtractDataFromCSV
                     dataTablePurchasesFactTable.Columns.Add("NetAmountOriginalCurrency", typeof(double));
                     dataTablePurchasesFactTable.Columns.Add("GrossAmountOriginalCurrency", typeof(double));
                     dataTablePurchasesFactTable.Columns.Add("VATOriginalCurrency", typeof(double));
-                    dataTablePurchasesFactTable.Columns.Add("CompanyId", typeof(int)).Expression = "1";
+                    dataTablePurchasesFactTable.Columns.Add("CompanyId", typeof(int));
 
                     // Create the columns for the Movements Table
                     dataTableMovementsFactTable.Columns.Add("Cod", typeof(string));
@@ -117,7 +117,7 @@ namespace ExtractDataFromCSV
                     dataTableMovementsFactTable.Columns.Add("ExitValue", typeof(double));
                     dataTableMovementsFactTable.Columns.Add("MovementValue", typeof(double));
                     dataTableMovementsFactTable.Columns.Add("ThirdParty", typeof(string));
-                    dataTableMovementsFactTable.Columns.Add("CompanyId", typeof(int)).Expression = "1";
+                    dataTableMovementsFactTable.Columns.Add("CompanyId", typeof(int));
 
                     // Read the files in ..\Data
                     string filePath = Path.Combine(slnFolder, ".\\Data");
@@ -138,20 +138,20 @@ namespace ExtractDataFromCSV
                         while (reader.Read()) // Each Read() call will move to the next row
                         {
                             // Get the values from the current row...
-                            int nif = int.Parse(reader.GetString(1));
-                            // If the NIF does not exist in the DataTable, add a new row
-                            string name = reader.GetString(2);
-                            string phoneNumber = reader.GetString(3);
-                            string email = reader.GetString(5);
-                            string address = reader.GetString(9);
-                            string postalCode = reader.GetString(10);
-                            string city = reader.GetString(11);
-                            string countryRegion = reader.GetString(12);
-                            string market = reader.GetString(0);
+                            int companyId = (int)reader.GetDouble(0);
+                            int nif = int.Parse(reader.GetString(2));
+                            string name = reader.GetString(3);
+                            string phoneNumber = reader.GetString(4);
+                            string email = reader.GetString(6);
+                            string address = reader.GetString(10);
+                            string postalCode = reader.GetString(11);
+                            string city = reader.GetString(12);
+                            string countryRegion = reader.GetString(13);
+                            string market = reader.GetString(1);
 
-                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("NIF") == nif))
+                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("Nif") == nif && row.Field<int>("CompanyId") == companyId))
                             {
-                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market);
+                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market, companyId);
                             }
                         }
                     }
@@ -172,19 +172,20 @@ namespace ExtractDataFromCSV
                         while (reader.Read()) // Each Read() call will move to the next row
                         {
                             // Get the values from the current row...
-                            int nif = int.Parse(reader.GetString(1));
-                            string name = reader.GetString(2);
-                            string phoneNumber = reader.GetString(3);
-                            string email = reader.GetString(4);
-                            string address = reader.GetString(6);
-                            string postalCode = reader.GetString(7);
-                            string city = reader.GetString(8);
-                            string countryRegion = reader.GetString(9);
-                            string market = reader.GetString(0);
+                            int companyId = (int)reader.GetDouble(0);
+                            int nif = int.Parse(reader.GetString(2));
+                            string name = reader.GetString(3);
+                            string phoneNumber = reader.GetString(4);
+                            string email = reader.GetString(5);
+                            string address = reader.GetString(7);
+                            string postalCode = reader.GetString(8);
+                            string city = reader.GetString(9);
+                            string countryRegion = reader.GetString(10);
+                            string market = reader.GetString(1);
 
-                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("NIF") == nif))
+                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("Nif") == nif && row.Field<int>("CompanyId") == companyId))
                             {
-                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market);
+                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market, companyId);
                             }
                         }
                     }
@@ -205,10 +206,11 @@ namespace ExtractDataFromCSV
                         while (reader.Read()) // Each Read() call will move to the next row
                         {
                             // Get the values from the current row...
-                            string cod = reader.GetString(1);
-                            string family = reader.GetString(3);
-                            string description = reader.GetString(4);
-                            string vat = reader.GetString(10);
+                            int companyId = (int)reader.GetDouble(0);
+                            string cod = reader.GetString(2);
+                            string family = reader.GetString(4);
+                            string description = reader.GetString(5);
+                            string vat = reader.GetString(11);
                             double percentageOfVat;
 
                             if (vat == "Normal")
@@ -224,7 +226,7 @@ namespace ExtractDataFromCSV
                                 percentageOfVat = 0.06;
                             }
 
-                            double purchasingPrice = reader.GetDouble(9);
+                            double purchasingPrice = reader.GetDouble(10);
 
                             // Check if the key exists and append to the existing list, otherwise create a new list
                             if (!productColumns.ContainsKey("Cod"))
@@ -246,6 +248,10 @@ namespace ExtractDataFromCSV
                             if (!productColumns.ContainsKey("PurchasingPrice"))
                                 productColumns.Add("PurchasingPrice", new List<string>());
                             productColumns["PurchasingPrice"].Add(purchasingPrice.ToString());
+
+                            if (!productColumns.ContainsKey("CompanyId"))
+                                productColumns.Add("CompanyId", new List<string>());
+                            productColumns["CompanyId"].Add(companyId.ToString());
                         }
                     }
 
@@ -265,21 +271,22 @@ namespace ExtractDataFromCSV
                         while (reader.Read()) // Each Read() call will move to the next row
                         {
                             // Get the values from the current row...
-                            int nifClient = int.Parse(reader.GetString(0));
-                            string dateKey = reader.GetString(2);
+                            int companyId = (int)reader.GetDouble(0);
+                            int nifClient = int.Parse(reader.GetString(1));
+                            string dateKey = reader.GetString(3);
                             dateKey = dateKey.Replace("/", "-");
-                            string number = reader.GetString(4);
-                            string type = reader.GetString(3);
-                            string cod = reader.GetString(5);
-                            int quantity = (int)reader.GetDouble(7);
-                            double netAmount = (reader.GetDouble(8));
-                            double grossAmount = (reader.GetDouble(9));
-                            double vat = (reader.GetDouble(10));
-                            string originalCurrency = reader.GetString(11);
-                            double exchangeRate = reader.GetDouble(12);
-                            double netAmountOriginalCurrency = reader.GetDouble(13);
-                            double grossAmountOriginalCurrency = reader.GetDouble(14);
-                            double vatOriginalCurrency = reader.GetDouble(15);
+                            string number = reader.GetString(5);
+                            string type = reader.GetString(4);
+                            string cod = reader.GetString(6);
+                            int quantity = (int)reader.GetDouble(8);
+                            double netAmount = (reader.GetDouble(9));
+                            double grossAmount = (reader.GetDouble(10));
+                            double vat = (reader.GetDouble(11));
+                            string originalCurrency = reader.GetString(12);
+                            double exchangeRate = reader.GetDouble(13);
+                            double netAmountOriginalCurrency = reader.GetDouble(14);
+                            double grossAmountOriginalCurrency = reader.GetDouble(15);
+                            double vatOriginalCurrency = reader.GetDouble(16);
 
                             string[] dateKeyParts = dateKey.Split('-');
                             dateKeyParts[1] = dateKeyParts[1].Length < 2 ? "0" + dateKeyParts[1] : dateKeyParts[1];
@@ -287,19 +294,19 @@ namespace ExtractDataFromCSV
 
                             dateKey = dateKeyParts[0] + "/" + dateKeyParts[1] + "/" + dateKeyParts[2];
 
-                            if (!invoiceDateKeys.ContainsKey((number, type)))
+                            if (!invoiceDateKeys.ContainsKey((number, type, companyId)))
                             {
-                                invoiceDateKeys.Add((number, type), dateKey);
+                                invoiceDateKeys.Add((number, type, companyId), dateKey);
                             }
 
-                            if (!dataTableSalesFactTable.AsEnumerable().Any(row => row.Field<string>("Number") == number && row.Field<string>("Cod") == cod))
+                            if (!dataTableSalesFactTable.AsEnumerable().Any(row => row.Field<string>("Number") == number && row.Field<string>("Cod") == cod && row.Field<int>("CompanyId") == companyId))
                             {
                                 dataTableSalesFactTable.Rows.Add(
                                     nifClient, number, type,
                                     cod, quantity, netAmount,
                                     grossAmount, vat,
                                     originalCurrency, exchangeRate,
-                                    netAmountOriginalCurrency, grossAmountOriginalCurrency, vatOriginalCurrency
+                                    netAmountOriginalCurrency, grossAmountOriginalCurrency, vatOriginalCurrency, companyId
                                 );
                             }
                         }
@@ -321,22 +328,23 @@ namespace ExtractDataFromCSV
                         while (reader.Read()) // Each Read() call will move to the next row
                         {
                             // Get the values from the current row...
-                            int nifClient = int.Parse(reader.GetString(0));
-                            string dateKey = reader.GetString(2);
+                            int companyId = (int)reader.GetDouble(0);
+                            int nifSupplier = int.Parse(reader.GetString(1));
+                            string dateKey = reader.GetString(3);
                             dateKey = dateKey.Replace("/", "-");
-                            string number = reader.GetString(4);
-                            string type = reader.GetString(3);
-                            string cod = reader.GetString(6);
-                            int quantity = (int)reader.GetDouble(8);
-                            string ourRef = reader.GetString(5);
-                            double netAmount = reader.GetDouble(9);
-                            double grossAmount = reader.GetDouble(10);
-                            double vat = reader.GetDouble(11);
-                            string originalCurrency = reader.GetString(12);
-                            double exchangeRate = reader.GetDouble(13);
-                            double netAmountOriginalCurrency = reader.GetDouble(14);
-                            double grossAmountOriginalCurrency = reader.GetDouble(15);
-                            double vatOriginalCurrency = reader.GetDouble(16);
+                            string number = reader.GetString(5);
+                            string type = reader.GetString(4);
+                            string cod = reader.GetString(7);
+                            int quantity = (int)reader.GetDouble(9);
+                            string ourRef = reader.GetString(6);
+                            double netAmount = reader.GetDouble(10);
+                            double grossAmount = reader.GetDouble(11);
+                            double vat = reader.GetDouble(12);
+                            string originalCurrency = reader.GetString(13);
+                            double exchangeRate = reader.GetDouble(14);
+                            double netAmountOriginalCurrency = reader.GetDouble(15);
+                            double grossAmountOriginalCurrency = reader.GetDouble(16);
+                            double vatOriginalCurrency = reader.GetDouble(17);
 
                             string[] dateKeyParts = dateKey.Split('-');
                             dateKeyParts[1] = dateKeyParts[1].Length < 2 ? "0" + dateKeyParts[1] : dateKeyParts[1];
@@ -344,19 +352,19 @@ namespace ExtractDataFromCSV
 
                             dateKey = dateKeyParts[0] + "/" + dateKeyParts[1] + "/" + dateKeyParts[2];
 
-                            if (!invoiceDateKeys.ContainsKey((number, type)))
+                            if (!invoiceDateKeys.ContainsKey((number, type, companyId)))
                             {
-                                invoiceDateKeys.Add((number, type), dateKey);
+                                invoiceDateKeys.Add((number, type, companyId), dateKey);
                             }
 
-                            if (!dataTablePurchasesFactTable.AsEnumerable().Any(row => row.Field<string>("Number") == number && row.Field<string>("Cod") == cod))
+                            if (!dataTablePurchasesFactTable.AsEnumerable().Any(row => row.Field<string>("Number") == number && row.Field<string>("Cod") == cod && row.Field<int>("CompanyId") == companyId))
                             {
                                 dataTablePurchasesFactTable.Rows.Add(
-                                    nifClient, number, type,
+                                    nifSupplier, number, type,
                                     cod, quantity, ourRef,
                                     netAmount, grossAmount, vat,
                                     originalCurrency, exchangeRate,
-                                    netAmountOriginalCurrency, grossAmountOriginalCurrency, vatOriginalCurrency
+                                    netAmountOriginalCurrency, grossAmountOriginalCurrency, vatOriginalCurrency, companyId
                                 );
                             }
                         }
@@ -378,18 +386,19 @@ namespace ExtractDataFromCSV
                         while (reader.Read()) // Each Read() call will move to the next row
                         {
                             // Get the values from the current row...
-                            string cod = reader.GetString(0);
-                            string dateKey = reader.GetString(2);
+                            int companyId = (int)reader.GetDouble(0);
+                            string cod = reader.GetString(1);
+                            string dateKey = reader.GetString(3);
                             dateKey = dateKey.Replace("/", "-");
-                            string doc = reader.GetString(5);
-                            string type = reader.GetString(4);
-                            int entryQuantity = (int)reader.GetDouble(6);
-                            int exitQuantity = (int)reader.GetDouble(7);
-                            int existingQuantity = (int)reader.GetDouble(8);
-                            double entryValue = reader.GetDouble(9);
-                            double exitValue = reader.GetDouble(10);
-                            double movementValue = reader.GetDouble(11);
-                            string thirdParty = reader.GetString(14);
+                            string doc = reader.GetString(6);
+                            string type = reader.GetString(5);
+                            int entryQuantity = (int)reader.GetDouble(7);
+                            int exitQuantity = (int)reader.GetDouble(8);
+                            int existingQuantity = (int)reader.GetDouble(9);
+                            double entryValue = reader.GetDouble(10);
+                            double exitValue = reader.GetDouble(11);
+                            double movementValue = reader.GetDouble(12);
+                            string thirdParty = reader.GetString(15);
 
                             string[] dateKeyParts = dateKey.Split('-');
                             dateKeyParts[1] = dateKeyParts[1].Length < 2 ? "0" + dateKeyParts[1] : dateKeyParts[1];
@@ -397,7 +406,7 @@ namespace ExtractDataFromCSV
 
                             dateKey = dateKeyParts[0] + "/" + dateKeyParts[1] + "/" + dateKeyParts[2];
 
-                            if (!invoiceDateKeys.ContainsKey((doc, type)))
+                            if (!invoiceDateKeys.ContainsKey((doc, type, companyId)))
                             {
                                 if (doc.IsNullOrEmpty())
                                 {
@@ -414,9 +423,9 @@ namespace ExtractDataFromCSV
                                     type = "Out";
                                 }
 
-                                if (!invoiceDateKeys.ContainsKey((doc, type)))
+                                if (!invoiceDateKeys.ContainsKey((doc, type, companyId)))
                                 {
-                                    invoiceDateKeys.Add((doc, type), dateKey);
+                                    invoiceDateKeys.Add((doc, type, companyId), dateKey);
                                 }
                             }
 
@@ -430,7 +439,7 @@ namespace ExtractDataFromCSV
                                 value[0] = existingQuantity.ToString();
                             }
 
-                            if (dataTableMovementsFactTable.AsEnumerable().Any(row => row.Field<string>("Doc") == doc && row.Field<string>("Type") == type && row.Field<string>("Cod") == cod))
+                            if (dataTableMovementsFactTable.AsEnumerable().Any(row => row.Field<string>("Doc") == doc && row.Field<string>("Type") == type && row.Field<string>("Cod") == cod && row.Field<int>("CompanyId") == companyId))
                             {
                                 continue;
                             }
@@ -438,7 +447,7 @@ namespace ExtractDataFromCSV
                             dataTableMovementsFactTable.Rows.Add(
                                     cod, doc, type,
                                     entryQuantity, exitQuantity, entryValue,
-                                    exitValue, movementValue, thirdParty
+                                    exitValue, movementValue, thirdParty, companyId
                             );
                         }
                     }
@@ -464,17 +473,22 @@ namespace ExtractDataFromCSV
                     // For each column in the productColumns dictionary, add the values to the Product Dimension table
                     for (int i = 0; i < productColumns["Cod"].Count; i++)
                     {
-                        dataTableProductDimension.Rows.Add(productColumns["Cod"][i], productColumns["Family"][i], productColumns["Description"][i], double.Parse(productColumns["PercentageOfVat"][i]), (productColumns["ExistingStock"][i]), double.Parse(productColumns["PurchasingPrice"][i]));
+                        dataTableProductDimension.Rows.Add(productColumns["Cod"][i], productColumns["Family"][i], productColumns["Description"][i], double.Parse(productColumns["PercentageOfVat"][i]), (productColumns["ExistingStock"][i]), double.Parse(productColumns["PurchasingPrice"][i]), int.Parse(productColumns["CompanyId"][i]));
                     }
 
                     // For each unique invoice, get the corresponding Date_Key and add it to the Invoice Dimension table
                     foreach (var invoice in invoiceDateKeys)
                     {
-                        dataTableInvoiceDimension.Rows.Add(invoice.Key.Item1, invoice.Key.Item2, invoice.Value);
+                        dataTableInvoiceDimension.Rows.Add(invoice.Key.Item1, invoice.Key.Item2, invoice.Value, invoice.Key.Item3);
                     }
 
                     // Truncate all tables
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Sales_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Clients_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -484,7 +498,17 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Clients_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Movements_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Products_Movements_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -494,7 +518,17 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Clients_Sales_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Clients_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -504,7 +538,17 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Products_Movements_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Sales_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Clients_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -514,7 +558,17 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Clients_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Movements_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Products_Movements_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -587,7 +641,8 @@ namespace ExtractDataFromCSV
                     {
                         bulkCopy.DestinationTableName = "dbo.Identities";
 
-                        bulkCopy.ColumnMappings.Add("NIF", "[NIF]");
+                        bulkCopy.ColumnMappings.Add("Nif", "[Nif]");
+                        bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
                         bulkCopy.ColumnMappings.Add("Name", "[Name]");
                         bulkCopy.ColumnMappings.Add("PhoneNumber", "[PhoneNumber]");
                         bulkCopy.ColumnMappings.Add("Email", "[Email]");
@@ -596,7 +651,6 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("City", "[City]");
                         bulkCopy.ColumnMappings.Add("Country_Region", "[Country_Region]");
                         bulkCopy.ColumnMappings.Add("Market", "[Market]");
-                        //bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableIdentityDimension);
                     }
@@ -609,7 +663,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
                         bulkCopy.ColumnMappings.Add("InvoiceDate", "[InvoiceDate]");
-                        //bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
+                        bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableInvoiceDimension);
                     }
@@ -625,7 +679,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("PertentageOfVat", "[PercentageofVAT]");
                         bulkCopy.ColumnMappings.Add("ExistingStock", "[ExistingStock]");
                         bulkCopy.ColumnMappings.Add("PurchasingPrice", "[PurchasingPrice]");
-                        //bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
+                        bulkCopy.ColumnMappings.Add("CompanyId", "[CompanyId]");
 
                         bulkCopy.WriteToServer(dataTableProductDimension);
                     }
@@ -658,7 +712,7 @@ namespace ExtractDataFromCSV
                     {
                         bulkCopy.DestinationTableName = "dbo.Purchases";
 
-                        bulkCopy.ColumnMappings.Add("NifClient", "[NifClient]");
+                        bulkCopy.ColumnMappings.Add("NifSupplier", "[NifSupplier]");
                         bulkCopy.ColumnMappings.Add("Number", "[Number]");
                         bulkCopy.ColumnMappings.Add("Type", "[Type]");
                         bulkCopy.ColumnMappings.Add("Cod", "[Cod]");
@@ -702,6 +756,7 @@ namespace ExtractDataFromCSV
                 catch (Exception ex)
                 {
                     sqlTransaction.Rollback();
+                    Console.WriteLine(ex.StackTrace);
                     Console.WriteLine(ex.Message);
                 }
 
