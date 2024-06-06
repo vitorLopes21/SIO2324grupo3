@@ -11,6 +11,9 @@
         // The quartile of the year in which the product was sold
         public string? Quartile { get; set; } = null;
 
+        // Id of the company that sold the product
+        public int? Company { get; set; } = null;
+
         // The name of the client
         public string? ClientName { get; set; } = null;
 
@@ -31,6 +34,9 @@
 
         // The month in which the product was sold
         public int Month { get; set; } = 0;
+
+        // Id of the company that sold the product
+        public int? Company { get; set; } = null;
 
         // The name of the client
         public string? ClientName { get; set; } = null;
@@ -55,6 +61,9 @@
 
         // The day in which the product was sold
         public int Day { get; set; } = 0;
+
+        // Id of the company that sold the product
+        public int? Company { get; set; } = null;
 
         // The name of the client
         public string? ClientName { get; set; } = null;

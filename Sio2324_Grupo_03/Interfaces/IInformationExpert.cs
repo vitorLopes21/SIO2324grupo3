@@ -37,8 +37,10 @@
 
         object GetTop3SuppliersByValuePerDay(int year, int month, int day);
 
-        // Method to retrieve the ranking of the most sold products per quartile
+        // Method to retrieve the ranking of the most sold products per quartile and month
         object GetMostSoldProductsPerQuartile();
+
+        object GetMostSoldProductsPerMonth();
 
         // Method to retrieve the purchases made to suppliers per quartile
         object GetPurchasesFromSuppliersPerQuartile();

@@ -51,6 +51,7 @@ namespace ExtractDataFromCSV
                     dataTableIdentityDimension.Columns.Add("Country_Region", typeof(string));
                     dataTableIdentityDimension.Columns.Add("Market", typeof(string));
                     dataTableIdentityDimension.Columns.Add("CompanyId", typeof(int));
+                    dataTableIdentityDimension.Columns.Add("Type", typeof(string));
 
                     // Create the columns for the Invoices table
                     dataTableInvoiceDimension.Columns.Add("Number", typeof(string));
@@ -149,9 +150,9 @@ namespace ExtractDataFromCSV
                             string countryRegion = reader.GetString(13);
                             string market = reader.GetString(1);
 
-                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("Nif") == nif && row.Field<int>("CompanyId") == companyId))
+                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("Nif") == nif && row.Field<int>("CompanyId") == companyId && row.Field<string>("Type") == "Client"))
                             {
-                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market, companyId);
+                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market, companyId, "Client");
                             }
                         }
                     }
@@ -183,9 +184,9 @@ namespace ExtractDataFromCSV
                             string countryRegion = reader.GetString(10);
                             string market = reader.GetString(1);
 
-                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("Nif") == nif && row.Field<int>("CompanyId") == companyId))
+                            if (!dataTableIdentityDimension.AsEnumerable().Any(row => row.Field<int>("Nif") == nif && row.Field<int>("CompanyId") == companyId && row.Field<string>("Type") == "Supplier"))
                             {
-                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market, companyId);
+                                dataTableIdentityDimension.Rows.Add(nif, name, phoneNumber, email, address, postalCode, city, countryRegion, market, companyId, "Supplier");
                             }
                         }
                     }
@@ -498,7 +499,7 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Clients_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Suppliers_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -528,7 +529,7 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Clients_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Suppliers_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -558,7 +559,7 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Clients_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Suppliers_Purchases_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
@@ -651,6 +652,7 @@ namespace ExtractDataFromCSV
                         bulkCopy.ColumnMappings.Add("City", "[City]");
                         bulkCopy.ColumnMappings.Add("Country_Region", "[Country_Region]");
                         bulkCopy.ColumnMappings.Add("Market", "[Market]");
+                        bulkCopy.ColumnMappings.Add("Type", "[Type]");
 
                         bulkCopy.WriteToServer(dataTableIdentityDimension);
                     }

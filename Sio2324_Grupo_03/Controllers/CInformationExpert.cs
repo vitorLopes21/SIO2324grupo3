@@ -431,6 +431,29 @@ namespace Sio2324_Grupo_03.Controllers
         }
 
         /// <summary>
+        /// HTTP GET method to retrieve the most sold products per month
+        /// </summary>
+        /// <returns>The most sold products per month</returns>
+        [HttpGet("most-sold-products-per-month")]
+        public IActionResult GetMostSoldProductsPerMonth()
+        {
+            try
+            {
+                // Retrieve the ranking of the most sold products per month
+                var jsonObjectReturned = _informationService.GetMostSoldProductsPerMonth();
+
+                // Return HTTP 200 OK response with the most sold products data
+                return Ok(jsonObjectReturned);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the most sold products per month.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the most sold products per month.");
+            }
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <returns></returns>

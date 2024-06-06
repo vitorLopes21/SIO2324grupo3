@@ -165,6 +165,7 @@
                     Year = result.Year,
                     Month = result.Month,
                     Day = result.Day,
+                    Company = result.Company,
                     ClientName = result.ClientName,
                     SpentMoney = result.SpentMoney,
                     BoughtProducts = result.BoughtProducts
@@ -206,6 +207,7 @@
                 {
                     Year = result.Year,
                     Month = result.Month,
+                    Company = result.Company,
                     ClientName = result.ClientName,
                     SpentMoney = result.SpentMoney,
                     BoughtProducts = result.BoughtProducts
@@ -247,6 +249,7 @@
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     ClientName = result.ClientName,
                     SpentMoney = result.SpentMoney,
                     BoughtProducts = result.BoughtProducts
@@ -291,6 +294,7 @@
                     Year = result.Year,
                     Month = result.Month,
                     Day = result.Day,
+                    Company = result.Company,
                     SupplierName = result.SupplierName,
                     City = result.City,
                     Market = result.Market,
@@ -334,6 +338,7 @@
                 {
                     Year = result.Year,
                     Month = result.Month,
+                    Company = result.Company,
                     SupplierName = result.SupplierName,
                     City = result.City,
                     Market = result.Market,
@@ -377,6 +382,7 @@
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     SupplierName = result.SupplierName,
                     City = result.City,
                     Market = result.Market,
@@ -423,6 +429,7 @@
                     Year = result.Year,
                     Month = result.Month,
                     Day = result.Day,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -464,6 +471,7 @@
                 {
                     Year = result.Year,
                     Month = result.Month,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -505,6 +513,7 @@
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -549,6 +558,7 @@
                     Year = result.Year,
                     Month = result.Month,
                     Day = result.Day,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -596,6 +606,7 @@
                 {
                     Year = result.Year,
                     Month = result.Month,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -643,6 +654,7 @@
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -684,6 +696,7 @@
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     SupplierName = result.SupplierName,
                     SpentMoney = result.SpentMoney,
                     AmountOfProductsBought = result.AmountOfProductsBought
@@ -720,6 +733,7 @@
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     Family = result.Family,
                     Description = result.Description,
                     MoneyEarnedFromSales = result.MoneyEarnedFromSales
@@ -730,6 +744,43 @@
             var mostSoldProductsReturned = new
             {
                 Caption = "List of the most sold products per quartile",
+                Products = mostSoldProducts
+            };
+
+            return mostSoldProductsReturned;
+        }
+
+        /// <summary>
+        /// Function to get the most sold products per month
+        /// </summary>
+        /// <returns>A list of the most sold products per month</returns>
+        public object GetMostSoldProductsPerMonth()
+        {
+            // Create a list to store the most sold products
+            List<MonthProductStatistics> mostSoldProducts = new();
+
+            // Execute the stored procedure and map the results to Product
+            string sqlCommand = "EXEC [dbo].[MostSoldProductsByMonth]";
+            var results = _context.MonthProductStatistics.FromSqlRaw(sqlCommand).ToList();
+
+            // Map the stored procedure results to the TopProduct objects
+            foreach (var result in results)
+            {
+                mostSoldProducts.Add(new MonthProductStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    Company = result.Company,
+                    Family = result.Family,
+                    Description = result.Description,
+                    MoneyEarnedFromSales = result.MoneyEarnedFromSales
+                });
+            }
+
+            // Create a new object that includes the caption and the suppliers
+            var mostSoldProductsReturned = new
+            {
+                Caption = "List of the most sold products per month",
                 Products = mostSoldProducts
             };
 
