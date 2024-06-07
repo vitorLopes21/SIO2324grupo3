@@ -11,6 +11,9 @@
         // The quartile in which the sale was made
         public string? Quartile { get; set; } = null;
 
+        // Id of the company that bought the product
+        public int? Company { get; set; } = null;
+
         // The net amount of money earned by the company from the sales of the products in a specific time period
         public decimal? NetAmountEarned { get; set; } = 0;
 
@@ -31,6 +34,9 @@
 
         // The month in which the sale was made
         public int? Month { get; set; } = 0;
+
+        // Id of the company that bought the product
+        public int? Company { get; set; } = 0;
 
         // The net amount of money earned by the company from the sales of the products in a specific time period
         public decimal? NetAmountEarned { get; set; } = 0;
@@ -56,6 +62,9 @@
         // The day in which the sale was made
         public int? Day { get; set; } = 0;
 
+        // Id of the company that bought the product
+        public int? Company { get; set; } = 0;
+
         // The net amount of money earned by the company from the sales of the products in a specific time period
         public decimal? NetAmountEarned { get; set; } = 0;
 
@@ -77,6 +86,9 @@
         // The quartile of the year in which the sales was made
         public string? Quartile { get; set; }
 
+        // Id of the company that bought the product
+        public int? Company { get; set; }
+
         // The amount of money earned by the company from the sales in a specific time period
         public decimal Money { get; set; }
     }
@@ -91,6 +103,9 @@
 
         // The quartile of the year in which the sales was made
         public string? Quartile { get; set; }
+
+        // Id of the company that bought the product
+        public int? Company { get; set; }
 
         // The amount of money earned by the company from the sales in a specific time period
         public decimal Money { get; set; }
