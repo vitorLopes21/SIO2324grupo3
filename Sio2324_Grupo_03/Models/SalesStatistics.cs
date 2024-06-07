@@ -122,6 +122,7 @@
         // The quartile in which the sales were made
         public string? Quartile { get; set; } = null;
 
+        // Id of the company that bought the product
         public int? Company { get; set; } = 0; // [Company]
 
         // The city in which the sales were made

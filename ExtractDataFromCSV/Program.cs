@@ -514,6 +514,16 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Products_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Quartile_Products_Sales_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
@@ -544,6 +554,16 @@ namespace ExtractDataFromCSV
                         sqlCommand.ExecuteNonQuery();
                     }
 
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Products_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Month_Products_Sales_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
@@ -570,6 +590,16 @@ namespace ExtractDataFromCSV
                     }
 
                     using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Products_Movements_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Products_Purchases_FactTable", sqlConnection, sqlTransaction))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand sqlCommand = new("TRUNCATE TABLE dbo.Daily_Products_Sales_FactTable", sqlConnection, sqlTransaction))
                     {
                         sqlCommand.ExecuteNonQuery();
                     }
