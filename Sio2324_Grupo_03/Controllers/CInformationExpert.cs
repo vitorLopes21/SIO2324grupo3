@@ -65,6 +65,7 @@ namespace Sio2324_Grupo_03.Controllers
             }
         }
 
+
         /// <summary>
         /// HTTP GET method to retrieve the sales statistics for a specific day
         /// </summary>
@@ -89,6 +90,54 @@ namespace Sio2324_Grupo_03.Controllers
 
                 // Return HTTP 500 Internal Server Error response with an error message
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while calculating sales statistics for day.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the product statistics for a specific quartile
+        /// </summary>
+        /// <returns> The product movements statistics for the specified quartile</returns>
+        [HttpGet("product-movements-stats-for-quartile")]
+        public IActionResult GetProductMovementsStatsForQuartile()
+        {
+            try
+            {
+                // Calculate product statistics for the specified quartile
+                var productStats = _informationService.CalculateProductStatsForQuartile();
+
+                // Return HTTP 200 OK response with the calculated product statistics data
+                return Ok(productStats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while calculating product statistics for quartile.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while calculating product statistics for quartile.");
+            }
+        }
+
+        /// <summary>
+        /// HTTP GET method to retrieve the product statistics for a specific month
+        /// </summary>
+        /// <returns> The product movements statistics for the specified month </returns>
+        [HttpGet("product-movements-stats-for-month")]
+        public IActionResult GetProductMovementsStatsForMonth()
+        {
+            try
+            {
+                // Calculate product statistics for the specified month
+                var productStats = _informationService.CalculateProductStatsForMonth();
+
+                // Return HTTP 200 OK response with the calculated product statistics data
+                return Ok(productStats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while calculating product statistics for month.");
+
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while calculating product statistics for month.");
             }
         }
 

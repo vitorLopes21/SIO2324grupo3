@@ -1,4 +1,6 @@
-﻿namespace Sio2324_Grupo_03.Data
+﻿using Sio2324_Grupo_03.Models;
+
+namespace Sio2324_Grupo_03.Data
 {
     public class DataContext : DbContext
     {
@@ -12,6 +14,10 @@
         public DbSet<QuartileAverageDailySales> AverageDailySales { get; set; }
 
         public DbSet<QuartileMonthSalesMode> MonthSalesModes { get; set; }
+
+        public DbSet<QuartileProductMovementsStatistics> QuartileProductMovementsStatistics { get; set; }
+
+        public DbSet<MonthProductMovementsStatistics> MonthProductMovementsStatistics { get; set; }
 
         // The products of the company
         public DbSet<QuartileProductStatistics> QuartileProductStatistics { get; set; }
@@ -47,6 +53,8 @@
             modelBuilder.Entity<DailySalesStatistics>().HasNoKey();
             modelBuilder.Entity<QuartileAverageDailySales>().HasNoKey();
             modelBuilder.Entity<QuartileMonthSalesMode>().HasNoKey();
+            modelBuilder.Entity<QuartileProductMovementsStatistics>().HasNoKey();
+            modelBuilder.Entity<MonthProductMovementsStatistics>().HasNoKey();
 
             modelBuilder.Entity<QuartileProductStatistics>().HasNoKey();
             modelBuilder.Entity<MonthProductStatistics>().HasNoKey();

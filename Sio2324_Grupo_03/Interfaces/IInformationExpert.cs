@@ -9,6 +9,11 @@
 
         object CalculateSalesStatsForDay(int year, int month, int day);
 
+        // Method to calculate product statistics for a time period in a year
+        object CalculateProductStatsForQuartile();
+        
+        object CalculateProductStatsForMonth();
+
         // Method to get the top 3 sold products for a specific time period
         object GetTop3MostSoldProductsPerQuartile(int year, int quartile);
 

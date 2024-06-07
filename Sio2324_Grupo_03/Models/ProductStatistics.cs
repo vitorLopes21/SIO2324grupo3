@@ -74,4 +74,50 @@
         // The amount of money earned by the company from the sales of the product in a specific time period
         public decimal MoneyEarnedFromSales { get; set; } = 0;
     }
+
+    public class MonthProductMovementsStatistics
+    {
+           // The year in which the product was sold
+        public int Year { get; set; } = 0;
+
+        // The month in which the product was sold
+        public int? Month { get; set; } = null;
+
+        // Id of the company that sold the product
+        public int? Company { get; set; } = null;
+
+    
+        // The name of the product Example: iPhone 13 Pro, ZenBook Pro, Galaxy S21, etc.
+        public string? Description { get; set; } = null;
+
+        // The Quantity of the product that was purchased in a specific time period
+        public int? EntryQuantity { get; set; } = 0;
+
+        // The Quantity of the product that was sold in a specific time period
+        public int? ExitQuantity { get; set; } = 0;
+        
+    }
+
+    public class QuartileProductMovementsStatistics
+    {
+           // The year in which the product was sold
+        public int Year { get; set; } = 0;
+
+        // The quartile in which the product was sold
+        public string? Quartile { get; set; } = null;
+
+        // Id of the company that sold the product
+        public int? Company { get; set; } = null;
+
+    
+        // The name of the product Example: iPhone 13 Pro, ZenBook Pro, Galaxy S21, etc.
+        public string? Description { get; set; } = null;
+
+        // The Quantity of the product that was purchased in a specific time period
+        public int? EntryQuantity { get; set; } = 0;
+
+        // The Quantity of the product that was sold in a specific time period
+        public int? ExitQuantity { get; set; } = 0;
+        
+    }   
 }

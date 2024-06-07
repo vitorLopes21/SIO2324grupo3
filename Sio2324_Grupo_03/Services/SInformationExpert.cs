@@ -1,4 +1,6 @@
-﻿namespace Sio2324_Grupo_03.Services
+﻿using System;
+
+namespace Sio2324_Grupo_03.Services
 {
     public class SInformationExpert : IInformationExpert
     {
@@ -136,6 +138,70 @@
 
             return salesStatsReturned;
         }
+
+        public object CalculateProductStatsForMonth()
+        {
+            List<MonthProductMovementsStatistics> productMovementStats = new();
+
+           
+
+            // Execute the stored procedure and map the results to Object
+            string sql = "EXEC [dbo].[CalculateProductMoventsForMonth]";
+            var results = _context.MonthProductMovementsStatistics.FromSqlRaw(sql).ToList();
+
+            foreach (var result in results)
+            {
+                // Map the stored procedure result to the Object object
+                productMovementStats.Add(new MonthProductMovementsStatistics
+                {
+                    Year = result.Year,
+                    Month = result.Month,
+                    Description = result.Description,
+                    EntryQuantity = result.EntryQuantity,
+                    ExitQuantity = result.ExitQuantity
+                });
+            }
+
+            // Create a new object that includes the caption and the sales statistics
+            var productMovementStatsReturned = new
+            {
+                Caption = "Product Movement statistics for a month",
+                ProductMovement = productMovementStats
+            };
+
+            return productMovementStatsReturned;
+        }
+
+        public object CalculateProductStatsForQuartile()
+        {
+            List<QuartileProductMovementsStatistics> productMovementStats = new();
+
+            // Execute the stored procedure and map the results to Object
+            string sql = "EXEC [dbo].[CalculateProductMoventsForQuartile]";
+            var results = _context.QuartileProductMovementsStatistics.FromSqlRaw(sql).ToList();
+
+            foreach (var result in results)
+            {
+                // Map the stored procedure result to the Object object
+                productMovementStats.Add(new QuartileProductMovementsStatistics
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    Description = result.Description,
+                    EntryQuantity = result.EntryQuantity,
+                    ExitQuantity = result.ExitQuantity
+                });
+            }
+
+            // Create a new object that includes the caption and the sales statistics
+            var productMovementStatsReturned = new
+            {
+                Caption = "Product Movement statistics for a quartile",
+                ProductMovement = productMovementStats
+            };
+
+            return productMovementStatsReturned;
+        }   
 
         /// <summary>
         /// Get the top 3 clients by value per day
