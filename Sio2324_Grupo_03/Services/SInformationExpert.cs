@@ -41,6 +41,7 @@ namespace Sio2324_Grupo_03.Services
                     Year = result.Year,
                     Month = result.Month,
                     Day = result.Day,
+                    Company = result.Company,
                     NetAmountEarned = result.NetAmountEarned,
                     GrossAmountEarned = result.GrossAmountEarned,
                     QuantitySold = result.QuantitySold
@@ -82,6 +83,7 @@ namespace Sio2324_Grupo_03.Services
                 {
                     Year = result.Year,
                     Month = result.Month,
+                    Company = result.Company,
                     NetAmountEarned = result.NetAmountEarned,
                     GrossAmountEarned = result.GrossAmountEarned,
                     QuantitySold = result.QuantitySold
@@ -123,6 +125,7 @@ namespace Sio2324_Grupo_03.Services
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     NetAmountEarned = result.NetAmountEarned,
                     GrossAmountEarned = result.GrossAmountEarned,
                     QuantitySold = result.QuantitySold
@@ -156,6 +159,7 @@ namespace Sio2324_Grupo_03.Services
                 {
                     Year = result.Year,
                     Month = result.Month,
+                    Company = result.Company,
                     Description = result.Description,
                     EntryQuantity = result.EntryQuantity,
                     ExitQuantity = result.ExitQuantity
@@ -187,6 +191,7 @@ namespace Sio2324_Grupo_03.Services
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     Description = result.Description,
                     EntryQuantity = result.EntryQuantity,
                     ExitQuantity = result.ExitQuantity
@@ -873,6 +878,7 @@ namespace Sio2324_Grupo_03.Services
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     Money = result.Money
                 });
             }
@@ -907,6 +913,7 @@ namespace Sio2324_Grupo_03.Services
                 {
                     Year = result.Year,
                     Quartile = result.Quartile,
+                    Company = result.Company,
                     Money = result.Money
                 });
             }
