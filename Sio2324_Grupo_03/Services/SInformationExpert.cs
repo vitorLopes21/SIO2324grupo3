@@ -149,7 +149,7 @@ namespace Sio2324_Grupo_03.Services
            
 
             // Execute the stored procedure and map the results to Object
-            string sql = "EXEC [dbo].[CalculateProductMoventsForMonth]";
+            string sql = "EXEC [dbo].[CalculateProductMovementsForMonth]";
             var results = _context.MonthProductMovementsStatistics.FromSqlRaw(sql).ToList();
 
             foreach (var result in results)
@@ -181,7 +181,7 @@ namespace Sio2324_Grupo_03.Services
             List<QuartileProductMovementsStatistics> productMovementStats = new();
 
             // Execute the stored procedure and map the results to Object
-            string sql = "EXEC [dbo].[CalculateProductMoventsForQuartile]";
+            string sql = "EXEC [dbo].[CalculateProductMovementsForQuartile]";
             var results = _context.QuartileProductMovementsStatistics.FromSqlRaw(sql).ToList();
 
             foreach (var result in results)
