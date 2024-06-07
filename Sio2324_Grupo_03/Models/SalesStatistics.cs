@@ -87,7 +87,7 @@
         public string? Quartile { get; set; }
 
         // Id of the company that bought the product
-        public int? Company { get; set; }
+        public int? Company { get; set; } = 0;
 
         // The amount of money earned by the company from the sales in a specific time period
         public decimal Money { get; set; }
@@ -105,7 +105,7 @@
         public string? Quartile { get; set; }
 
         // Id of the company that bought the product
-        public int? Company { get; set; }
+        public int? Company { get; set; } = 0;
 
         // The amount of money earned by the company from the sales in a specific time period
         public decimal Money { get; set; }
