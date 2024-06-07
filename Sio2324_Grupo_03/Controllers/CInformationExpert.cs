@@ -570,5 +570,27 @@ namespace Sio2324_Grupo_03.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the montly sales mode by quartile.");
             }
         }
+
+        /// HTTP GET method to retrieve the cities by quartile sales
+        /// </summary>
+        /// <returns>Cities By  Quartile Sales</returns>
+        [HttpGet("cities-by-quartile-sales")]
+        public IActionResult GetCitiesByQuartileSales([FromQuery] int year = 2023, [FromQuery] int quartile = 1)
+        {
+            try
+            {
+                // Retrieve the cities by quartile sales for the specified quartile
+                var citiesByQuartileSales = _informationService.GetCitiesByQuartileSales(year, quartile);
+
+                // Return HTTP 200 OK response with the cities by quartile sales data
+                return Ok(citiesByQuartileSales);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the cities by quartile sales.");
+                // Return HTTP 500 Internal Server Error response with an error message
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the cities by quartile sales.");
+            }
+        }
     }
 }

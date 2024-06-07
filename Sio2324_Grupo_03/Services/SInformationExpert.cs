@@ -920,5 +920,47 @@ namespace Sio2324_Grupo_03.Services
 
             return monthlySalesModeReturned;
         }
+
+        /// <summary>
+        /// Function to get the cities by quartile sales
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="quartile"></param>
+        /// <returns>The list of the cities by quartile sales</returns></returns>
+        public object GetCitiesByQuartileSales(int year, int quartile)
+        {
+            List<QuartileCity> cities = new();
+
+            // Create parameters for the stored procedure
+            SqlParameter yearParam = new("@year_param", SqlDbType.Int) { Value = year };
+            SqlParameter quartileParam = new("@quartile_param", SqlDbType.Int) { Value = quartile };
+
+            // Execute the stored procedure and map the results to City
+            string sqlCommand = "EXEC [dbo].[GetCitiesByQuartileSales] @year_param, @quartile_param";
+            var results = _context.CitySalesStatistics.FromSqlRaw(sqlCommand, yearParam, quartileParam).ToList();
+
+            // Map the stored procedure results to the City objects
+            foreach (var result in results)
+            {
+                cities.Add(new QuartileCity
+                {
+                    Year = result.Year,
+                    Quartile = result.Quartile,
+                    Company = result.Company,
+                    City = result.City,
+                    TotalSales = result.TotalSales
+                });
+            }
+
+            // Create a new object that includes the caption and the cities
+            var citiesReturned = new
+            {
+                Caption = "Cities by quartile sales",
+                Cities = cities
+            };
+
+            return citiesReturned;
+
+        }
     }
 }

@@ -110,4 +110,24 @@
         // The amount of money earned by the company from the sales in a specific time period
         public decimal Money { get; set; }
     }
+
+    /// <summary>
+    /// Quartile city sales statistics class
+    /// </summary>
+    public class QuartileCity
+    {
+        // The year in which the sales were made
+        public int? Year { get; set; } = 0;
+
+        // The quartile in which the sales were made
+        public string? Quartile { get; set; } = null;
+
+        public int? Company { get; set; } = 0; // [Company]
+
+        // The city in which the sales were made
+        public string? City { get; set; } = null;
+
+        // The total sales made in the city in a specific time period
+        public decimal? TotalSales { get; set; } = 0;
+    }
 }

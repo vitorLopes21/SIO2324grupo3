@@ -55,5 +55,8 @@
 
         // Method to retrieve the ranking of the montly sales mode by quartile
         object GetMonthSalesModeByQuartile();
+
+        // Method to retrieve the ranking of the most sold products per month
+        object GetCitiesByQuartileSales(int year, int quartile);
     }
 }

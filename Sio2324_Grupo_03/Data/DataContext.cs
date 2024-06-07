@@ -19,6 +19,8 @@ namespace Sio2324_Grupo_03.Data
 
         public DbSet<MonthProductMovementsStatistics> MonthProductMovementsStatistics { get; set; }
 
+        public DbSet<QuartileCity> CitySalesStatistics { get; set; }
+
         // The products of the company
         public DbSet<QuartileProductStatistics> QuartileProductStatistics { get; set; }
 
@@ -55,6 +57,7 @@ namespace Sio2324_Grupo_03.Data
             modelBuilder.Entity<QuartileMonthSalesMode>().HasNoKey();
             modelBuilder.Entity<QuartileProductMovementsStatistics>().HasNoKey();
             modelBuilder.Entity<MonthProductMovementsStatistics>().HasNoKey();
+            modelBuilder.Entity<QuartileCity>().HasNoKey();
 
             modelBuilder.Entity<QuartileProductStatistics>().HasNoKey();
             modelBuilder.Entity<MonthProductStatistics>().HasNoKey();
